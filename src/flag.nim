@@ -95,6 +95,29 @@ proc action*[T] (fv: var FlagVariant, value: T): void =
                 of faCallback: fv.callbackFuzzyBool(value)
                 of faRef: fv.refFuzzyBool[] = value
 
+proc action* (fv: var FlagVariant, value: string): void =
+    case fv.datatype:
+        of itInt:
+            case fv.actionInt:
+                of faCallback: fv.callbackInt(parseInt(value))
+                of faRef: fv.refInt[] = vaparseInt(value)lue
+        of itFloat:
+            case fv.actionFloat:
+                of faCallback: fv.callbackFloat(parseFloat(value))
+                of faRef: fv.refFloat[] = parseFloat(value)
+        of itString:
+            case fv.actionString:
+                of faCallback: fv.callbackString(value)
+                of faRef: fv.refString[] = value
+        of itBool:
+            case fv.actionBool:
+                of faCallback: fv.callbackBool(parseBool(value))
+                of faRef: fv.refBool[] = parseBool(value)
+        of itFuzzyBool:
+            case fv.actionFuzzyBool:
+                of faCallback: fv.callbackFuzzyBool(parseFuzzyBool(value))
+                of faRef: fv.refFuzzyBool[] = parseFuzzyBool(value)
+
 proc setValue*[T] (fv: var FlagVariant, value: T): void =
     case fv.datatype:
         of itInt:
@@ -115,7 +138,7 @@ proc setValue* (fv: var FlagVariant, value: string): void =
         of itFloat:
             fv.valFloat = parseFloat(value)
         of itString:
-            fv.valString = $value
+            fv.valString = value
         of itBool:
             fv.valBool = parseBool(value)
         of itFuzzyBool:
