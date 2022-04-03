@@ -103,8 +103,6 @@ proc setValue*[T] (fv: var FlagVariant, value: T): void =
             fv.valFloat = value
         of itString:
             fv.valString = value
-        of itFile:
-            fv.valFile = value
         of itBool:
             fv.valBool = value
         of itFuzzyBool:
