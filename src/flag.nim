@@ -1,4 +1,5 @@
 import datatypes
+import std/strutils
 
 
 type
@@ -46,3 +47,78 @@ type
                     of faRef: refFuzzyBool*: ref FuzzyBool
         help*: string  # long
         info*: string # short
+
+
+proc action* (fv: var FlagVariant): void =
+    case fv.datatype:
+        of itInt:
+            case fv.actionInt:
+                of faCallback: fv.callbackInt(fv.valInt)
+                of faRef: fv.refInt[] = fv.valInt
+        of itFloat:
+            case fv.actionFloat:
+                of faCallback: fv.callbackFloat(fv.valFloat)
+                of faRef: fv.refFloat[] = fv.valFloat
+        of itString:
+            case fv.actionString:
+                of faCallback: fv.callbackString(fv.valString)
+                of faRef: fv.refString[] = fv.valString
+        of itBool:
+            case fv.actionBool:
+                of faCallback: fv.callbackBool(fv.valBool)
+                of faRef: fv.refBool[] = fv.valBool
+        of itFuzzyBool:
+            case fv.actionFuzzyBool:
+                of faCallback: fv.callbackFuzzyBool(fv.valFuzzyBool)
+                of faRef: fv.refFuzzyBool[] = fv.valFuzzyBool
+
+proc action*[T] (fv: var FlagVariant, value: T): void =
+    case fv.datatype:
+        of itInt:
+            case fv.actionInt:
+                of faCallback: fv.callbackInt(value)
+                of faRef: fv.refInt[] = value
+        of itFloat:
+            case fv.actionFloat:
+                of faCallback: fv.callbackFloat(value)
+                of faRef: fv.refFloat[] = value
+        of itString:
+            case fv.actionString:
+                of faCallback: fv.callbackString(value)
+                of faRef: fv.refString[] = value
+        of itBool:
+            case fv.actionBool:
+                of faCallback: fv.callbackBool(value)
+                of faRef: fv.refBool[] = value
+        of itFuzzyBool:
+            case fv.actionFuzzyBool:
+                of faCallback: fv.callbackFuzzyBool(value)
+                of faRef: fv.refFuzzyBool[] = value
+
+proc setValue*[T] (fv: var FlagVariant, value: T): void =
+    case fv.datatype:
+        of itInt:
+            fv.valInt = value
+        of itFloat:
+            fv.valFloat = value
+        of itString:
+            fv.valString = value
+        of itFile:
+            fv.valFile = value
+        of itBool:
+            fv.valBool = value
+        of itFuzzyBool:
+            fv.valFuzzyBool = value
+
+proc setValue* (fv: var FlagVariant, value: string): void =
+    case fv.datatype:
+        of itInt:
+            fv.valInt = parseInt(value)
+        of itFloat:
+            fv.valFloat = parseFloat(value)
+        of itString:
+            fv.valString = $value
+        of itBool:
+            fv.valBool = parseBool(value)
+        of itFuzzyBool:
+            fv.valFuzzyBool = parseFuzzyBool(value)
