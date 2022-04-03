@@ -100,7 +100,7 @@ proc action* (fv: var FlagVariant, value: string): void =
         of itInt:
             case fv.actionInt:
                 of faCallback: fv.callbackInt(parseInt(value))
-                of faRef: fv.refInt[] = vaparseInt(value)lue
+                of faRef: fv.refInt[] = parseInt(value)
         of itFloat:
             case fv.actionFloat:
                 of faCallback: fv.callbackFloat(parseFloat(value))
