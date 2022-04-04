@@ -18,13 +18,13 @@ type
         help*: string  # long
         subcommands*: Table[string, SubCommandVariant]
         callback*: proc (input: varargs[string, `$`]): void
-        flagsShort*: Table[char, ref FlagVariant]
-        flagsLong*: Table[string, ref FlagVariant]
-        sharedFlagsShort*: Table[char, ref FlagVariant]  # applies to all subcommands
-        sharedFlagsLong*: Table[string, ref FlagVariant]  # applies to all subcommands
+        flagsShort*: Table[char, FlagVariantRef]
+        flagsLong*: Table[string, FlagVariantRef]
+        sharedFlagsShort*: Table[char, FlagVariantRef]  # applies to all subcommands
+        sharedFlagsLong*: Table[string, FlagVariantRef]  # applies to all subcommands
 
 
-proc process* (cv: CommandVariant): void =
+proc process* (cv: var CommandVariant): void =
     echo(commandLineParams())
 
 proc new* (name: string,
@@ -37,10 +37,10 @@ proc new* (name: string,
                             help: help,
                             subcommands: initTable[string, SubCommandVariant](),
                             callback: callback,
-                            flagsShort: initTable[char, ref FlagVariant](),
-                            flagsLong: initTable[string, ref FlagVariant](),
-                            sharedFlagsShort: initTable[char, ref FlagVariant](),
-                            sharedFlagsLong: initTable[string, ref FlagVariant]()
+                            flagsShort: initTable[char, FlagVariantRef](),
+                            flagsLong: initTable[string, FlagVariantRef](),
+                            sharedFlagsShort: initTable[char, FlagVariantRef](),
+                            sharedFlagsLong: initTable[string, FlagVariantRef]()
                             )
 
 proc addSubcommand* (cv: var CommandVariant,
@@ -55,8 +55,8 @@ proc addSubcommand* (cv: var CommandVariant,
                         help: help,
                         subcommands: initTable[string, SubCommandVariant](),
                         callback: callback,
-                        flagsShort: initTable[char, ref FlagVariant](),
-                        flagsLong: initTable[string, ref FlagVariant](),
-                        sharedFlagsShort: initTable[char, ref FlagVariant](),
-                        sharedFlagsLong: initTable[string, ref FlagVariant]()
+                        flagsShort: initTable[char, FlagVariantRef](),
+                        flagsLong: initTable[string, FlagVariantRef](),
+                        sharedFlagsShort: initTable[char, FlagVariantRef](),
+                        sharedFlagsLong: initTable[string, FlagVariantRef]()
                         ))

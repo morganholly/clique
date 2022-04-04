@@ -12,6 +12,7 @@ type
         faCallback,
         faRef
 
+    FlagVariantRef* = ref FlagVariant
     FlagVariant* = object
         case kind*: FlagKind:
             of fkShortOnly: chr*: char
