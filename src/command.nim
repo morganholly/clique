@@ -27,7 +27,7 @@ type
 proc process* (cv: var CommandVariant): void =
     echo(commandLineParams())
 
-proc new* (name: string,
+proc newCommandVariant* (name: string,
             info: string,
             help: string,
             callback: proc (input: varargs[string, `$`]): void
