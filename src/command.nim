@@ -107,6 +107,53 @@ proc addIntFlag* (cv: var CommandVariant,
     else:
         raise newException(ValueError, "Creation of a flag requires at least one name")
 
+proc addIntFlag* (cv: var CommandVariant,
+                    shortName: char = '\0',
+                    longName: string = "",
+                    reference: ref int64,
+                    shared: bool
+                    ): void =
+    if (shortName != '\0') or (longName != ""):
+        if (shortName != '\0') and (longName != ""):
+            var flag = FlagVariantRef(kind: fkShortAndLong,
+                                        shortName: shortName,
+                                        longName: longName,
+                                        datatype: itInt,
+                                        valInt: 0,
+                                        actionInt: faRef,
+                                        refInt: reference)
+            if shared:
+                cv.sharedFlagsShort[shortName] = flag
+                cv.sharedFlagsLong[longName] = flag
+            else:
+                cv.flagsShort[shortName] = flag
+                cv.flagsLong[longName] = flag
+        elif (shortName != '\0'):
+            var flag = FlagVariantRef(kind: fkShortOnly,
+                                        chr: shortName,
+                                        datatype: itInt,
+                                        valInt: 0,
+                                        actionInt: faRef,
+                                        refInt: reference)
+            if shared:
+                cv.sharedFlagsShort[shortName] = flag
+            else:
+                cv.flagsShort[shortName] = flag
+        else:
+            var flag = FlagVariantRef(kind: fkLongOnly,
+                                        name: longName,
+                                        datatype: itInt,
+                                        valInt: 0,
+                                        actionInt: faRef,
+                                        refInt: reference)
+            if shared:
+                cv.sharedFlagsLong[longName] = flag
+            else:
+                cv.flagsLong[longName] = flag
+    else:
+        raise newException(ValueError, "Creation of a flag requires at least one name")
+
+
 proc addFloatFlag* (cv: var CommandVariant,
                     shortName: char = '\0',
                     longName: string = "",
@@ -152,6 +199,53 @@ proc addFloatFlag* (cv: var CommandVariant,
                 cv.flagsLong[longName] = flag
     else:
         raise newException(ValueError, "Creation of a flag requires at least one name")
+
+proc addFloatFlag* (cv: var CommandVariant,
+                    shortName: char = '\0',
+                    longName: string = "",
+                    reference: ref float64,
+                    shared: bool
+                    ): void =
+    if (shortName != '\0') or (longName != ""):
+        if (shortName != '\0') and (longName != ""):
+            var flag = FlagVariantRef(kind: fkShortAndLong,
+                                        shortName: shortName,
+                                        longName: longName,
+                                        datatype: itFloat,
+                                        valFloat: 0.0,
+                                        actionFloat: faRef,
+                                        refFloat: reference)
+            if shared:
+                cv.sharedFlagsShort[shortName] = flag
+                cv.sharedFlagsLong[longName] = flag
+            else:
+                cv.flagsShort[shortName] = flag
+                cv.flagsLong[longName] = flag
+        elif (shortName != '\0'):
+            var flag = FlagVariantRef(kind: fkShortOnly,
+                                        chr: shortName,
+                                        datatype: itFloat,
+                                        valFloat: 0.0,
+                                        actionFloat: faRef,
+                                        refFloat: reference)
+            if shared:
+                cv.sharedFlagsShort[shortName] = flag
+            else:
+                cv.flagsShort[shortName] = flag
+        else:
+            var flag = FlagVariantRef(kind: fkLongOnly,
+                                        name: longName,
+                                        datatype: itFloat,
+                                        valFloat: 0.0,
+                                        actionFloat: faRef,
+                                        refFloat: reference)
+            if shared:
+                cv.sharedFlagsLong[longName] = flag
+            else:
+                cv.flagsLong[longName] = flag
+    else:
+        raise newException(ValueError, "Creation of a flag requires at least one name")
+
 
 proc addStringFlag* (cv: var CommandVariant,
                     shortName: char = '\0',
@@ -199,6 +293,53 @@ proc addStringFlag* (cv: var CommandVariant,
     else:
         raise newException(ValueError, "Creation of a flag requires at least one name")
 
+proc addStringFlag* (cv: var CommandVariant,
+                    shortName: char = '\0',
+                    longName: string = "",
+                    reference: ref string,
+                    shared: bool
+                    ): void =
+    if (shortName != '\0') or (longName != ""):
+        if (shortName != '\0') and (longName != ""):
+            var flag = FlagVariantRef(kind: fkShortAndLong,
+                                        shortName: shortName,
+                                        longName: longName,
+                                        datatype: itString,
+                                        valString: "",
+                                        actionString: faRef,
+                                        refString: reference)
+            if shared:
+                cv.sharedFlagsShort[shortName] = flag
+                cv.sharedFlagsLong[longName] = flag
+            else:
+                cv.flagsShort[shortName] = flag
+                cv.flagsLong[longName] = flag
+        elif (shortName != '\0'):
+            var flag = FlagVariantRef(kind: fkShortOnly,
+                                        chr: shortName,
+                                        datatype: itString,
+                                        valString: "",
+                                        actionString: faRef,
+                                        refString: reference)
+            if shared:
+                cv.sharedFlagsShort[shortName] = flag
+            else:
+                cv.flagsShort[shortName] = flag
+        else:
+            var flag = FlagVariantRef(kind: fkLongOnly,
+                                        name: longName,
+                                        datatype: itString,
+                                        valString: "",
+                                        actionString: faRef,
+                                        refString: reference)
+            if shared:
+                cv.sharedFlagsLong[longName] = flag
+            else:
+                cv.flagsLong[longName] = flag
+    else:
+        raise newException(ValueError, "Creation of a flag requires at least one name")
+
+
 proc addBoolFlag* (cv: var CommandVariant,
                     shortName: char = '\0',
                     longName: string = "",
@@ -245,6 +386,53 @@ proc addBoolFlag* (cv: var CommandVariant,
     else:
         raise newException(ValueError, "Creation of a flag requires at least one name")
 
+proc addBoolFlag* (cv: var CommandVariant,
+                    shortName: char = '\0',
+                    longName: string = "",
+                    reference: ref bool,
+                    shared: bool
+                    ): void =
+    if (shortName != '\0') or (longName != ""):
+        if (shortName != '\0') and (longName != ""):
+            var flag = FlagVariantRef(kind: fkShortAndLong,
+                                        shortName: shortName,
+                                        longName: longName,
+                                        datatype: itBool,
+                                        valBool: false,
+                                        actionBool: faRef,
+                                        refBool: reference)
+            if shared:
+                cv.sharedFlagsShort[shortName] = flag
+                cv.sharedFlagsLong[longName] = flag
+            else:
+                cv.flagsShort[shortName] = flag
+                cv.flagsLong[longName] = flag
+        elif (shortName != '\0'):
+            var flag = FlagVariantRef(kind: fkShortOnly,
+                                        chr: shortName,
+                                        datatype: itBool,
+                                        valBool: false,
+                                        actionBool: faRef,
+                                        refBool: reference)
+            if shared:
+                cv.sharedFlagsShort[shortName] = flag
+            else:
+                cv.flagsShort[shortName] = flag
+        else:
+            var flag = FlagVariantRef(kind: fkLongOnly,
+                                        name: longName,
+                                        datatype: itBool,
+                                        valBool: false,
+                                        actionBool: faRef,
+                                        refBool: reference)
+            if shared:
+                cv.sharedFlagsLong[longName] = flag
+            else:
+                cv.flagsLong[longName] = flag
+    else:
+        raise newException(ValueError, "Creation of a flag requires at least one name")
+
+
 proc addFuzzyBoolFlag* (cv: var CommandVariant,
                     shortName: char = '\0',
                     longName: string = "",
@@ -284,6 +472,52 @@ proc addFuzzyBoolFlag* (cv: var CommandVariant,
                                         valFuzzyBool: fbUncertain,
                                         actionFuzzyBool: faCallback,
                                         callbackFuzzyBool: callback)
+            if shared:
+                cv.sharedFlagsLong[longName] = flag
+            else:
+                cv.flagsLong[longName] = flag
+    else:
+        raise newException(ValueError, "Creation of a flag requires at least one name")
+
+proc addFuzzyBoolFlag* (cv: var CommandVariant,
+                    shortName: char = '\0',
+                    longName: string = "",
+                    reference: ref FuzzyBool,
+                    shared: bool
+                    ): void =
+    if (shortName != '\0') or (longName != ""):
+        if (shortName != '\0') and (longName != ""):
+            var flag = FlagVariantRef(kind: fkShortAndLong,
+                                        shortName: shortName,
+                                        longName: longName,
+                                        datatype: itFuzzyBool,
+                                        valFuzzyBool: fbUncertain,
+                                        actionFuzzyBool: faRef,
+                                        refFuzzyBool: reference)
+            if shared:
+                cv.sharedFlagsShort[shortName] = flag
+                cv.sharedFlagsLong[longName] = flag
+            else:
+                cv.flagsShort[shortName] = flag
+                cv.flagsLong[longName] = flag
+        elif (shortName != '\0'):
+            var flag = FlagVariantRef(kind: fkShortOnly,
+                                        chr: shortName,
+                                        datatype: itFuzzyBool,
+                                        valFuzzyBool: fbUncertain,
+                                        actionFuzzyBool: faRef,
+                                        refFuzzyBool: reference)
+            if shared:
+                cv.sharedFlagsShort[shortName] = flag
+            else:
+                cv.flagsShort[shortName] = flag
+        else:
+            var flag = FlagVariantRef(kind: fkLongOnly,
+                                        name: longName,
+                                        datatype: itFuzzyBool,
+                                        valFuzzyBool: fbUncertain,
+                                        actionFuzzyBool: faRef,
+                                        refFuzzyBool: reference)
             if shared:
                 cv.sharedFlagsLong[longName] = flag
             else:
