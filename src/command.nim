@@ -1,4 +1,4 @@
-import std/tables, std/os
+import std/tables, std/os, std/strutils
 import flag, datatypes, alias
 
 
@@ -7,12 +7,15 @@ type
         sckCommand,
         sckAlias
 
-    SubCommandVariant* = object
+    SubCommandVariant* = ref object
         case kind*: SubCommandKind:
-            of sckCommand: command*: Command
-            of sckAlias: aliasStateMachine*: AliasVariant
+            of sckCommand:
+                command*: Command
+            of sckAlias:
+                aliasStateMachine*: AliasVariant
+        parent*: Command
 
-    Command* = object
+    Command* = ref object
         name*: string
         info*: string # short
         help*: string  # long
@@ -22,10 +25,45 @@ type
         flagsLong*: Table[string, FlagVariantRef]
         sharedFlagsShort*: Table[char, FlagVariantRef]  # applies to all subcommands
         sharedFlagsLong*: Table[string, FlagVariantRef]  # applies to all subcommands
+        parent*: Command
 
 
 proc process* (com: var Command): void =
     echo(commandLineParams())
+
+proc parse* (com: var Command, params: seq[string], root: Command, readOffset: uint = 0): void =
+    if params[readOffset].startsWith("-"):
+        discard  # flag
+    else:
+        if params[readOffset] in com.subcommands:
+            var subcommand = com.subcommands[params[readOffset]]
+            case subcommand.kind:
+                of sckCommand:
+                    parse(subcommand.command, params, root, readOffset + 1)
+                of sckAlias:
+                    var alias = subcommand.aliasStateMachine
+                    case alias.kind:
+                        of akMoveOnly:
+                            var current: SubCommandVariant = subcommand
+                            for state in alias.states:
+                                case state.kind:
+                                    of amMoveUp:
+                                        if current.parent == root:
+                                            current = SubCommandVariant(kind: sckCommand, command: root)
+                                        else:
+                                            current = current.parent.parent.subcommands[current.parent.name]
+                                    of amMoveRoot:
+                                        current = SubCommandVariant(kind: sckCommand, command: root)
+                                    of amMoveDown:
+                                        case subcommand.kind:
+                                            of sckCommand:
+                                                current = current.command.subcommands[state.commandName]
+                                            of sckAlias:
+                                                raise newException(ValueError, "Aliases do not contain subcommands")
+                        of akProcessing:
+                            discard
+                            # moveStates: seq[AliasMoveStateVariant]
+                            # procStates: seq[AliasProcStateVariant]
 
 proc newCommand* (name: string,
                     info: string,
@@ -40,7 +78,8 @@ proc newCommand* (name: string,
                     flagsShort: initTable[char, FlagVariantRef](),
                     flagsLong: initTable[string, FlagVariantRef](),
                     sharedFlagsShort: initTable[char, FlagVariantRef](),
-                    sharedFlagsLong: initTable[string, FlagVariantRef]()
+                    sharedFlagsLong: initTable[string, FlagVariantRef](),
+                    parent: nil
                     )
 
 proc addSubcommand* (com: var Command,
@@ -49,17 +88,20 @@ proc addSubcommand* (com: var Command,
                     help: string,
                     callback: proc (input: varargs[string, `$`]): void
                     ): void =
-    com.subcommands[name] = SubCommandVariant(kind: sckCommand, command:
-        Command(name: name,
-                info: info,
-                help: help,
-                subcommands: initTable[string, SubCommandVariant](),
-                callback: callback,
-                flagsShort: initTable[char, FlagVariantRef](),
-                flagsLong: initTable[string, FlagVariantRef](),
-                sharedFlagsShort: initTable[char, FlagVariantRef](),
-                sharedFlagsLong: initTable[string, FlagVariantRef]()
-                ))
+    com.subcommands[name] = SubCommandVariant(
+        kind: sckCommand,
+        command: Command(name: name,
+                        info: info,
+                        help: help,
+                        subcommands: initTable[string, SubCommandVariant](),
+                        callback: callback,
+                        flagsShort: initTable[char, FlagVariantRef](),
+                        flagsLong: initTable[string, FlagVariantRef](),
+                        sharedFlagsShort: initTable[char, FlagVariantRef](),
+                        sharedFlagsLong: initTable[string, FlagVariantRef](),
+                        parent: com
+                        ),
+        parent: com)
 
 proc addIntFlag* (com: var Command,
                     shortName: char = '\0',
