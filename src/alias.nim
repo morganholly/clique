@@ -9,11 +9,11 @@ type
         amMoveDown
 
     AliasMoveStateVariant* = object
-        case kind: AliasMoveStateKind
+        case kind*: AliasMoveStateKind
             of amMoveUp, amMoveRoot:
                 discard
             of amMoveDown:
-                commandName: string
+                commandName*: string
 
     AliasProcStateKind* = enum
         apSetCharFlag,
@@ -24,45 +24,45 @@ type
     AliasProcStateVariant* = object
         case kind: AliasProcStateKind
             of apSetCharFlag:
-                chr: char
+                chr*: char
                 case charFlagType: InputType
                     of itInt:
-                        newValProc_char_int: proc (input: int64): int64
+                        newValProc_char_int*: proc (input: int64): int64
                     of itFloat:
-                        newValProc_char_float: proc (input: float64): float64
+                        newValProc_char_float*: proc (input: float64): float64
                     of itString:
-                        newValProc_char_string: proc (input: string): string
+                        newValProc_char_string*: proc (input: string): string
                     of itBool:
-                        newValProc_char_bool: proc (input: bool): bool
+                        newValProc_char_bool*: proc (input: bool): bool
                     of itFuzzyBool:
-                        newValProc_char_FuzzyBool: proc (input: FuzzyBool): FuzzyBool
+                        newValProc_char_FuzzyBool*: proc (input: FuzzyBool): FuzzyBool
             of apSetStringFlag:
-                name: string
+                name*: string
                 case stringFlagType: InputType
                     of itInt:
-                        newValProc_string_int: proc (input: int64): int64
+                        newValProc_string_int*: proc (input: int64): int64
                     of itFloat:
-                        newValProc_string_float: proc (input: float64): float64
+                        newValProc_string_float*: proc (input: float64): float64
                     of itString:
-                        newValProc_string_string: proc (input: string): string
+                        newValProc_string_string*: proc (input: string): string
                     of itBool:
-                        newValProc_string_bool: proc (input: bool): bool
+                        newValProc_string_bool*: proc (input: bool): bool
                     of itFuzzyBool:
-                        newValProc_string_FuzzyBool: proc (input: FuzzyBool): FuzzyBool
+                        newValProc_string_FuzzyBool*: proc (input: FuzzyBool): FuzzyBool
             of apProcInput:
-                inputIndex: int
-                newValProcInput: proc (input: string): string
+                inputIndex*: int
+                newValProcInput*: proc (input: string): string
             of apProcInputs:
-                newValProcInputs: proc (input: seq[string]): seq[string]
+                newValProcInputs*: proc (input: seq[string]): seq[string]
 
     AliasKind* = enum
         akMoveOnly,
         akProcessing
 
     AliasVariant* = object
-        case kind: AliasKind
+        case kind*: AliasKind
             of akMoveOnly:
-                states: seq[AliasMoveStateVariant]
+                states*: seq[AliasMoveStateVariant]
             of akProcessing:
-                moveStates: seq[AliasMoveStateVariant]
-                procStates: seq[AliasProcStateVariant]
+                moveStates*: seq[AliasMoveStateVariant]
+                procStates*: seq[AliasProcStateVariant]
