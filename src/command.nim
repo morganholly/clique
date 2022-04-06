@@ -5,7 +5,7 @@ import flag, datatypes, alias
 type
     SubCommandKind* = enum
         sckCommand,
-        sckAlias  # maybe a seq of commands to either move to a parent command, do a name lookup, return to the root node, set a flag, run a proc on a flag value, run a proc on an input
+        sckAlias
 
     SubCommandVariant* = object
         case kind*: SubCommandKind:
