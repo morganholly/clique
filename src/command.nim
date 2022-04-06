@@ -3,107 +3,111 @@ import flag, datatypes, alias
 
 
 type
-    SubCommandKind* = enum
-        sckCommand,
-        sckAlias
+    AliasKind* = enum
+        akMoveOnly,
+        akProcessing
 
-    SubCommandVariant* = ref object
-        case kind*: SubCommandKind:
-            of sckCommand:
-                command*: Command
-            of sckAlias:
-                aliasStateMachine*: AliasVariant
-        parent*: Command
+    CommandKind* = enum
+        ckCommand,
+        ckAlias
 
-    Command* = ref object
-        name*: string
-        info*: string # short
-        help*: string  # long
-        subcommands*: Table[string, SubCommandVariant]
-        callback*: proc (input: varargs[string, `$`]): void
-        flagsShort*: Table[char, FlagVariantRef]
-        flagsLong*: Table[string, FlagVariantRef]
-        sharedFlagsShort*: Table[char, FlagVariantRef]  # applies to all subcommands
-        sharedFlagsLong*: Table[string, FlagVariantRef]  # applies to all subcommands
-        parent*: Command
+    CommandVariant* = ref object
+        case kind*: CommandKind:
+            of ckCommand:
+                name*: string
+                info*: string # short
+                help*: string  # long
+                subcommands*: Table[string, CommandVariant]
+                callback*: proc (input: varargs[string, `$`]): void
+                flagsShort*: Table[char, FlagVariantRef]
+                flagsLong*: Table[string, FlagVariantRef]
+                sharedFlagsShort*: Table[char, FlagVariantRef]  # applies to all subcommands
+                sharedFlagsLong*: Table[string, FlagVariantRef]  # applies to all subcommands
+            of ckAlias:
+                case aliasKind*: AliasKind
+                    of akMoveOnly:
+                        states*: seq[AliasMoveStateVariant]
+                    of akProcessing:
+                        moveStates*: seq[AliasMoveStateVariant]
+                        procStates*: seq[AliasProcStateVariant]
+        parent*: CommandVariant
 
 
-proc process* (com: var Command): void =
-    echo(commandLineParams())
+# proc process* (com: var CommandVariant): void =
+#     echo(commandLineParams())
 
-proc parse* (com: var Command, params: seq[string], root: Command, readOffset: uint = 0): void =
+proc parse* (com: var CommandVariant, params: seq[string], root: CommandVariant, readOffset: uint = 0): void =
     if params[readOffset].startsWith("-"):
         discard  # flag
     else:
         if params[readOffset] in com.subcommands:
             var subcommand = com.subcommands[params[readOffset]]
             case subcommand.kind:
-                of sckCommand:
-                    parse(subcommand.command, params, root, readOffset + 1)
-                of sckAlias:
-                    var alias = subcommand.aliasStateMachine
-                    case alias.kind:
-                        of akMoveOnly:
-                            var current: SubCommandVariant = subcommand
-                            for state in alias.states:
-                                case state.kind:
-                                    of amMoveUp:
-                                        if current.parent == root:
-                                            current = SubCommandVariant(kind: sckCommand, command: root)
-                                        else:
-                                            current = current.parent.parent.subcommands[current.parent.name]
-                                    of amMoveRoot:
-                                        current = SubCommandVariant(kind: sckCommand, command: root)
-                                    of amMoveDown:
-                                        case subcommand.kind:
-                                            of sckCommand:
-                                                current = current.command.subcommands[state.commandName]
-                                            of sckAlias:
-                                                raise newException(ValueError, "Aliases do not contain subcommands")
-                        of akProcessing:
-                            discard
-                            # moveStates: seq[AliasMoveStateVariant]
-                            # procStates: seq[AliasProcStateVariant]
+                of ckCommand:
+                    parse(subcommand, params, root, readOffset + 1)
+                of ckAlias:
+                    discard
+                    # var alias = subcommand.aliasStateMachine
+                    # case alias.kind:
+                    #     of akMoveOnly:
+                    #         var current: SubCommandVariant = subcommand
+                    #         for state in alias.states:
+                    #             case state.kind:
+                    #                 of amMoveUp:
+                    #                     if current.parent == root:
+                    #                         current = SubCommandVariant(kind: ckCommand, command: root)
+                    #                     else:
+                    #                         current = current.parent.parent.subcommands[current.parent.name]
+                    #                 of amMoveRoot:
+                    #                     current = SubCommandVariant(kind: ckCommand, command: root)
+                    #                 of amMoveDown:
+                    #                     case subcommand.kind:
+                    #                         of ckCommand:
+                    #                             current = current.command.subcommands[state.commandName]
+                    #                         of ckAlias:
+                    #                             raise newException(ValueError, "Aliases do not contain subcommands")
+                    #     of akProcessing:
+                    #         discard
+                    #         # moveStates: seq[AliasMoveStateVariant]
+                    #         # procStates: seq[AliasProcStateVariant]
 
 proc newCommand* (name: string,
                     info: string,
                     help: string,
                     callback: proc (input: varargs[string, `$`]): void
-                    ): Command =
-    result = Command(name: name,
-                    info: info,
-                    help: help,
-                    subcommands: initTable[string, SubCommandVariant](),
-                    callback: callback,
-                    flagsShort: initTable[char, FlagVariantRef](),
-                    flagsLong: initTable[string, FlagVariantRef](),
-                    sharedFlagsShort: initTable[char, FlagVariantRef](),
-                    sharedFlagsLong: initTable[string, FlagVariantRef](),
-                    parent: nil
-                    )
+                    ): CommandVariant =
+    result = CommandVariant(kind: ckCommand,
+                            name: name,
+                            info: info,
+                            help: help,
+                            subcommands: initTable[string, CommandVariant](),
+                            callback: callback,
+                            flagsShort: initTable[char, FlagVariantRef](),
+                            flagsLong: initTable[string, FlagVariantRef](),
+                            sharedFlagsShort: initTable[char, FlagVariantRef](),
+                            sharedFlagsLong: initTable[string, FlagVariantRef](),
+                            parent: nil
+                            )
 
-proc addSubcommand* (com: var Command,
+proc addSubcommand* (com: var CommandVariant,
                     name: string,
                     info: string,
                     help: string,
                     callback: proc (input: varargs[string, `$`]): void
                     ): void =
-    com.subcommands[name] = SubCommandVariant(
-        kind: sckCommand,
-        command: Command(name: name,
-                        info: info,
-                        help: help,
-                        subcommands: initTable[string, SubCommandVariant](),
-                        callback: callback,
-                        flagsShort: initTable[char, FlagVariantRef](),
-                        flagsLong: initTable[string, FlagVariantRef](),
-                        sharedFlagsShort: initTable[char, FlagVariantRef](),
-                        sharedFlagsLong: initTable[string, FlagVariantRef](),
-                        parent: com
-                        ),
-        parent: com)
+    com.subcommands[name] = CommandVariant(kind: ckCommand,
+                                            name: name,
+                                            info: info,
+                                            help: help,
+                                            subcommands: initTable[string, CommandVariant](),
+                                            callback: callback,
+                                            flagsShort: initTable[char, FlagVariantRef](),
+                                            flagsLong: initTable[string, FlagVariantRef](),
+                                            sharedFlagsShort: initTable[char, FlagVariantRef](),
+                                            sharedFlagsLong: initTable[string, FlagVariantRef](),
+                                            parent: com)
 
-proc addIntFlag* (com: var Command,
+proc addIntFlag* (com: var CommandVariant,
                     shortName: char = '\0',
                     longName: string = "",
                     callback: proc (val: int64): void,
@@ -149,7 +153,7 @@ proc addIntFlag* (com: var Command,
     else:
         raise newException(ValueError, "Creation of a flag requires at least one name")
 
-proc addIntFlag* (com: var Command,
+proc addIntFlag* (com: var CommandVariant,
                     shortName: char = '\0',
                     longName: string = "",
                     reference: ref int64,
@@ -196,7 +200,7 @@ proc addIntFlag* (com: var Command,
         raise newException(ValueError, "Creation of a flag requires at least one name")
 
 
-proc addFloatFlag* (com: var Command,
+proc addFloatFlag* (com: var CommandVariant,
                     shortName: char = '\0',
                     longName: string = "",
                     callback: proc (val: float64): void,
@@ -242,7 +246,7 @@ proc addFloatFlag* (com: var Command,
     else:
         raise newException(ValueError, "Creation of a flag requires at least one name")
 
-proc addFloatFlag* (com: var Command,
+proc addFloatFlag* (com: var CommandVariant,
                     shortName: char = '\0',
                     longName: string = "",
                     reference: ref float64,
@@ -289,7 +293,7 @@ proc addFloatFlag* (com: var Command,
         raise newException(ValueError, "Creation of a flag requires at least one name")
 
 
-proc addStringFlag* (com: var Command,
+proc addStringFlag* (com: var CommandVariant,
                     shortName: char = '\0',
                     longName: string = "",
                     callback: proc (val: string): void,
@@ -335,7 +339,7 @@ proc addStringFlag* (com: var Command,
     else:
         raise newException(ValueError, "Creation of a flag requires at least one name")
 
-proc addStringFlag* (com: var Command,
+proc addStringFlag* (com: var CommandVariant,
                     shortName: char = '\0',
                     longName: string = "",
                     reference: ref string,
@@ -382,7 +386,7 @@ proc addStringFlag* (com: var Command,
         raise newException(ValueError, "Creation of a flag requires at least one name")
 
 
-proc addBoolFlag* (com: var Command,
+proc addBoolFlag* (com: var CommandVariant,
                     shortName: char = '\0',
                     longName: string = "",
                     callback: proc (val: bool): void,
@@ -428,7 +432,7 @@ proc addBoolFlag* (com: var Command,
     else:
         raise newException(ValueError, "Creation of a flag requires at least one name")
 
-proc addBoolFlag* (com: var Command,
+proc addBoolFlag* (com: var CommandVariant,
                     shortName: char = '\0',
                     longName: string = "",
                     reference: ref bool,
@@ -475,7 +479,7 @@ proc addBoolFlag* (com: var Command,
         raise newException(ValueError, "Creation of a flag requires at least one name")
 
 
-proc addFuzzyBoolFlag* (com: var Command,
+proc addFuzzyBoolFlag* (com: var CommandVariant,
                     shortName: char = '\0',
                     longName: string = "",
                     callback: proc (val: FuzzyBool): void,
@@ -521,7 +525,7 @@ proc addFuzzyBoolFlag* (com: var Command,
     else:
         raise newException(ValueError, "Creation of a flag requires at least one name")
 
-proc addFuzzyBoolFlag* (com: var Command,
+proc addFuzzyBoolFlag* (com: var CommandVariant,
                     shortName: char = '\0',
                     longName: string = "",
                     reference: ref FuzzyBool,

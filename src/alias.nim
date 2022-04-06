@@ -54,15 +54,3 @@ type
                 newValProcInput*: proc (input: string): string
             of apProcInputs:
                 newValProcInputs*: proc (input: seq[string]): seq[string]
-
-    AliasKind* = enum
-        akMoveOnly,
-        akProcessing
-
-    AliasVariant* = object
-        case kind*: AliasKind
-            of akMoveOnly:
-                states*: seq[AliasMoveStateVariant]
-            of akProcessing:
-                moveStates*: seq[AliasMoveStateVariant]
-                procStates*: seq[AliasProcStateVariant]
