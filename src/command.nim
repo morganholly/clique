@@ -46,30 +46,29 @@ proc parse* (com: var CommandVariant, params: seq[string], root: CommandVariant,
                 of ckCommand:
                     parse(subcommand, params, root, readOffset + 1)
                 of ckAlias:
-                    discard
-                    # var alias = subcommand.aliasStateMachine
-                    # case alias.kind:
-                    #     of akMoveOnly:
-                    #         var current: SubCommandVariant = subcommand
-                    #         for state in alias.states:
-                    #             case state.kind:
-                    #                 of amMoveUp:
-                    #                     if current.parent == root:
-                    #                         current = SubCommandVariant(kind: ckCommand, command: root)
-                    #                     else:
-                    #                         current = current.parent.parent.subcommands[current.parent.name]
-                    #                 of amMoveRoot:
-                    #                     current = SubCommandVariant(kind: ckCommand, command: root)
-                    #                 of amMoveDown:
-                    #                     case subcommand.kind:
-                    #                         of ckCommand:
-                    #                             current = current.command.subcommands[state.commandName]
-                    #                         of ckAlias:
-                    #                             raise newException(ValueError, "Aliases do not contain subcommands")
-                    #     of akProcessing:
-                    #         discard
-                    #         # moveStates: seq[AliasMoveStateVariant]
-                    #         # procStates: seq[AliasProcStateVariant]
+                    var alias = subcommand
+                    case alias.aliasKind:
+                        of akMoveOnly:
+                            var current: CommandVariant = subcommand
+                            for state in alias.states:
+                                case state.kind:
+                                    of amMoveUp:
+                                        if current.parent == root:
+                                            current = root
+                                        else:
+                                            current = current.parent
+                                    of amMoveRoot:
+                                        current = root
+                                    of amMoveDown:
+                                        case subcommand.kind:
+                                            of ckCommand:
+                                                current = current.subcommands[state.commandName]
+                                            of ckAlias:
+                                                raise newException(ValueError, "Aliases do not contain subcommands")
+                        of akProcessing:
+                            discard
+                            # moveStates: seq[AliasMoveStateVariant]
+                            # procStates: seq[AliasProcStateVariant]
 
 proc newCommand* (name: string,
                     info: string,
