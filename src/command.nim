@@ -63,28 +63,37 @@ proc parse* (com: var CommandVariant, params: seq[string], root: CommandVariant,
                         var alias = subcommand
                         case alias.aliasKind:
                             of akMoveOnly:
+                                echo("move alias")
                                 var current: CommandVariant = subcommand
                                 for state in alias.states:
                                     case state.kind:
                                         of amMoveUp:
-                                            if current.parent == root:
-                                                current = root
-                                            else:
+                                            echo("move up")
+                                            if current != root:
                                                 current = current.parent
                                         of amMoveRoot:
+                                            echo("move root")
                                             current = root
                                         of amMoveDown:
-                                            case subcommand.kind:
+                                            echo("move down to ", state.commandName)
+                                            case current.kind:
                                                 of ckCommand:
                                                     current = current.subcommands[state.commandName]
                                                 of ckAlias:
                                                     raise newException(ValueError, "Aliases do not contain subcommands")
+                                case current.kind:
+                                    of ckCommand:
+                                        current.callback()
+                                    of ckAlias:
+                                        raise newException(ValueError, "Aliases do not contain callbacks")
                             of akProcessing:
                                 discard
                                 # moveStates: seq[AliasMoveStateVariant]
                                 # procStates: seq[AliasProcStateVariant]
             else:
                 echo("input or misspelled")
+    else:
+        com.callback()
 
 proc process* (com: var CommandVariant): void =
     echo("process")
@@ -125,6 +134,27 @@ proc addSubcommand* (com: var CommandVariant,
                                             flagsLong: initTable[string, FlagVariantRef](),
                                             sharedFlagsShort: initTable[char, FlagVariantRef](),
                                             sharedFlagsLong: initTable[string, FlagVariantRef](),
+                                            parent: com)
+    result = com.subcommands[name]
+
+proc addAlias* (com: var CommandVariant,
+                    name: string,
+                    movements: string
+                    ): CommandVariant =
+    var movementsGenerated: seq[AliasMoveStateVariant] = @[]
+    for i in movements.split(","):
+        case i:
+            of "root", "r", "~":
+                movementsGenerated = movementsGenerated & @[AliasMoveStateVariant(kind: amMoveRoot)]
+            of "parent", "up", "^":
+                movementsGenerated = movementsGenerated & @[AliasMoveStateVariant(kind: amMoveUp)]
+            elif len(i.replace("`", "").replace("\\", "")) > 0:
+                movementsGenerated = movementsGenerated & @[AliasMoveStateVariant(kind: amMoveDown, commandName: i.replace("`", "").replace("\\", ""))]
+            else:
+                raise newException(ValueError, "Parsing alias string requires all segments to be at least one character in length, not" & i)
+    com.subcommands[name] = CommandVariant(kind: ckALias,
+                                            aliasKind: akMoveOnly,
+                                            states: movementsGenerated,
                                             parent: com)
     result = com.subcommands[name]
 
