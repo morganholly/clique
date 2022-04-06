@@ -32,45 +32,66 @@ type
                         procStates*: seq[AliasProcStateVariant]
         parent*: CommandVariant
 
+proc `$`* (com: CommandVariant): string =
+        case com.kind:
+            of ckCommand:
+                result = com.name & com.info & com.help & $com.subcommands & $com.flagsShort & $com.flagsLong & $com.sharedFlagsShort & $com.sharedFlagsLong
+            of ckAlias:
+                result = "alias"
 
-# proc process* (com: var CommandVariant): void =
-#     echo(commandLineParams())
-
-proc parse* (com: var CommandVariant, params: seq[string], root: CommandVariant, readOffset: uint = 0): void =
-    if params[readOffset].startsWith("-"):
-        discard  # flag
-    else:
-        if params[readOffset] in com.subcommands:
-            var subcommand = com.subcommands[params[readOffset]]
-            case subcommand.kind:
-                of ckCommand:
-                    parse(subcommand, params, root, readOffset + 1)
-                of ckAlias:
-                    var alias = subcommand
-                    case alias.aliasKind:
-                        of akMoveOnly:
-                            var current: CommandVariant = subcommand
-                            for state in alias.states:
-                                case state.kind:
-                                    of amMoveUp:
-                                        if current.parent == root:
+proc parse* (com: var CommandVariant, params: seq[string], root: CommandVariant, readOffset: range[0 .. high(int)] = 0): void =
+    echo("parse")
+    echo(len(params), params, readOffset)
+    if (len(params) - readOffset) > 0:
+        echo("has params")
+        if params[readOffset].startsWith("-"):
+            echo("flag, currently not implimented")
+            discard  # flag
+        else:
+            echo("subcommand or input")
+            echo($com.subcommands)
+            echo(params[readOffset])
+            if params[readOffset] in com.subcommands:
+                echo("subcommand")
+                var subcommand = com.subcommands[params[readOffset]]
+                case subcommand.kind:
+                    of ckCommand:
+                        echo("command")
+                        parse(subcommand, params, root, readOffset + 1)
+                    of ckAlias:
+                        echo("alias")
+                        var alias = subcommand
+                        case alias.aliasKind:
+                            of akMoveOnly:
+                                var current: CommandVariant = subcommand
+                                for state in alias.states:
+                                    case state.kind:
+                                        of amMoveUp:
+                                            if current.parent == root:
+                                                current = root
+                                            else:
+                                                current = current.parent
+                                        of amMoveRoot:
                                             current = root
-                                        else:
-                                            current = current.parent
-                                    of amMoveRoot:
-                                        current = root
-                                    of amMoveDown:
-                                        case subcommand.kind:
-                                            of ckCommand:
-                                                current = current.subcommands[state.commandName]
-                                            of ckAlias:
-                                                raise newException(ValueError, "Aliases do not contain subcommands")
-                        of akProcessing:
-                            discard
-                            # moveStates: seq[AliasMoveStateVariant]
-                            # procStates: seq[AliasProcStateVariant]
+                                        of amMoveDown:
+                                            case subcommand.kind:
+                                                of ckCommand:
+                                                    current = current.subcommands[state.commandName]
+                                                of ckAlias:
+                                                    raise newException(ValueError, "Aliases do not contain subcommands")
+                            of akProcessing:
+                                discard
+                                # moveStates: seq[AliasMoveStateVariant]
+                                # procStates: seq[AliasProcStateVariant]
+            else:
+                echo("input or misspelled")
 
-proc newCommand* (name: string,
+proc process* (com: var CommandVariant): void =
+    echo("process")
+    parse(com, commandLineParams(), com, 0)
+
+
+proc newCommandVariant* (name: string,
                     info: string,
                     help: string,
                     callback: proc (input: varargs[string, `$`]): void
@@ -93,7 +114,7 @@ proc addSubcommand* (com: var CommandVariant,
                     info: string,
                     help: string,
                     callback: proc (input: varargs[string, `$`]): void
-                    ): void =
+                    ): CommandVariant =
     com.subcommands[name] = CommandVariant(kind: ckCommand,
                                             name: name,
                                             info: info,
@@ -105,6 +126,7 @@ proc addSubcommand* (com: var CommandVariant,
                                             sharedFlagsShort: initTable[char, FlagVariantRef](),
                                             sharedFlagsLong: initTable[string, FlagVariantRef](),
                                             parent: com)
+    result = com.subcommands[name]
 
 proc addIntFlag* (com: var CommandVariant,
                     shortName: char = '\0',

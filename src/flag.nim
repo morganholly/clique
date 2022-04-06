@@ -49,6 +49,41 @@ type
         help*: string  # long
         info*: string # short
 
+proc `$`* (fv: FlagVariantRef): string =
+        case fv.kind:
+            of fkShortOnly: result = result & $fv.chr
+            of fkLongOnly: result = result & fv.name
+            of fkShortAndLong:
+                result = result & $fv.chr & $fv.longName
+        case fv.datatype:
+            of itInt:
+                result = result & $fv.valInt
+                case fv.actionInt:
+                    of faCallback: result = result & "callbackInt"
+                    of faRef: result = result & "refInt"
+            of itFloat:
+                result = result & $fv.valFloat
+                case fv.actionFloat:
+                    of faCallback: result = result & "callbackFloat"
+                    of faRef: result = result & "refFloat"
+            of itString:
+                result = result & $fv.valString
+                case fv.actionString:
+                    of faCallback: result = result & "callbackString"
+                    of faRef: result = result & "refString"
+            of itBool:  # false by default
+                result = result & $fv.valBool
+                case fv.actionBool:
+                    of faCallback: result = result & "callbackBool"
+                    of faRef: result = result & "refBool"
+            of itFuzzyBool:  # fbUncertain by default
+                result = result & $fv.valFuzzyBool
+                case fv.actionFuzzyBool:
+                    of faCallback: result = result & "callbackFuzzyBool"
+                    of faRef: result = result & "refFuzzyBool"
+        result = result & fv.help
+        result = result & fv.info
+
 
 proc action* (fv: var FlagVariant): void =
     case fv.datatype:
