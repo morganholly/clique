@@ -1,5 +1,5 @@
 import std/tables, std/os
-import flag, datatypes
+import flag, datatypes, alias
 
 
 type
@@ -7,16 +7,16 @@ type
         sckCommand,
         sckAlias  # maybe a seq of commands to either move to a parent command, do a name lookup, return to the root node, set a flag, run a proc on a flag value, run a proc on an input
 
-    SubCommand* = object
+    SubCommandVariant* = object
         case kind*: SubCommandKind:
             of sckCommand: command*: Command
-            of sckAlias: aliased*: string
+            of sckAlias: aliasStateMachine*: AliasVariant
 
     Command* = object
         name*: string
         info*: string # short
         help*: string  # long
-        subcommands*: Table[string, SubCommand]
+        subcommands*: Table[string, SubCommandVariant]
         callback*: proc (input: varargs[string, `$`]): void
         flagsShort*: Table[char, FlagVariantRef]
         flagsLong*: Table[string, FlagVariantRef]
@@ -35,7 +35,7 @@ proc newCommand* (name: string,
     result = Command(name: name,
                     info: info,
                     help: help,
-                    subcommands: initTable[string, SubCommand](),
+                    subcommands: initTable[string, SubCommandVariant](),
                     callback: callback,
                     flagsShort: initTable[char, FlagVariantRef](),
                     flagsLong: initTable[string, FlagVariantRef](),
@@ -49,11 +49,11 @@ proc addSubcommand* (com: var Command,
                     help: string,
                     callback: proc (input: varargs[string, `$`]): void
                     ): void =
-    com.subcommands[name] = SubCommand(kind: sckCommand, command:
+    com.subcommands[name] = SubCommandVariant(kind: sckCommand, command:
         Command(name: name,
                 info: info,
                 help: help,
-                subcommands: initTable[string, SubCommand](),
+                subcommands: initTable[string, SubCommandVariant](),
                 callback: callback,
                 flagsShort: initTable[char, FlagVariantRef](),
                 flagsLong: initTable[string, FlagVariantRef](),
