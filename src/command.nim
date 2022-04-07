@@ -81,11 +81,7 @@ proc parse* (com: var CommandVariant, params: seq[string], root: CommandVariant,
                                                     current = current.subcommands[state.commandName]
                                                 of ckAlias:
                                                     raise newException(ValueError, "Aliases do not contain subcommands")
-                                case current.kind:
-                                    of ckCommand:
-                                        current.callback()
-                                    of ckAlias:
-                                        raise newException(ValueError, "Aliases do not contain callbacks")
+                                parse(current, params, root, readOffset + 1)
                             of akProcessing:
                                 discard
                                 # moveStates: seq[AliasMoveStateVariant]
