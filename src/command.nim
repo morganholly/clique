@@ -155,6 +155,17 @@ proc addAlias* (com: var CommandVariant,
     result = com.subcommands[name]
 
 
+proc recAddSharedShortFlag* (com: var CommandVariant, name: char, flag: FlagVariantRef): void =
+    com.sharedFlagsShort[name] = flag
+    for subc in com.subcommands.mvalues():
+        recAddSharedShortFlag(subc, name, flag)
+
+proc recAddSharedLongFlag* (com: var CommandVariant, name: string, flag: FlagVariantRef): void =
+    com.sharedFlagsLong[name] = flag
+    for subc in com.subcommands.mvalues():
+        recAddSharedLongFlag(subc, name, flag)
+
+
 proc addIntFlag* (com: var CommandVariant,
                     shortName: char,
                     longName: string,
