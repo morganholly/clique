@@ -171,7 +171,7 @@ proc addIntFlag* (com: var CommandVariant,
                     longName: string,
                     callback: proc (val: int64): void,
                     shared: bool = false
-                    ): CommandVariant =
+                    ): var CommandVariant =
     var flag = FlagVariantRef(kind: fkShortAndLong,
                                 shortName: shortName,
                                 longName: longName,
@@ -191,7 +191,7 @@ proc addIntFlag* (com: var CommandVariant,
                     shortName: char,
                     callback: proc (val: int64): void,
                     shared: bool = false
-                    ): CommandVariant =
+                    ): var CommandVariant =
     var flag = FlagVariantRef(kind: fkShortOnly,
                                 chr: shortName,
                                 datatype: itInt,
@@ -208,7 +208,7 @@ proc addIntFlag* (com: var CommandVariant,
                     longName: string,
                     callback: proc (val: int64): void,
                     shared: bool = false
-                    ): CommandVariant =
+                    ): var CommandVariant =
     var flag = FlagVariantRef(kind: fkLongOnly,
                                 name: longName,
                                 datatype: itInt,
@@ -226,7 +226,7 @@ proc addIntFlag* (com: var CommandVariant,
                     longName: string,
                     reference: ref int64,
                     shared: bool = false
-                    ): CommandVariant =
+                    ): var CommandVariant =
     var flag = FlagVariantRef(kind: fkShortAndLong,
                                 shortName: shortName,
                                 longName: longName,
@@ -246,7 +246,7 @@ proc addIntFlag* (com: var CommandVariant,
                     shortName: char,
                     reference: ref int64,
                     shared: bool = false
-                    ): CommandVariant =
+                    ): var CommandVariant =
     var flag = FlagVariantRef(kind: fkShortOnly,
                                 chr: shortName,
                                 datatype: itInt,
@@ -263,7 +263,7 @@ proc addIntFlag* (com: var CommandVariant,
                     longName: string,
                     reference: ref int64,
                     shared: bool = false
-                    ): CommandVariant =
+                    ): var CommandVariant =
     var flag = FlagVariantRef(kind: fkLongOnly,
                                 name: longName,
                                 datatype: itInt,
@@ -282,7 +282,7 @@ proc addFloatFlag* (com: var CommandVariant,
                     longName: string,
                     callback: proc (val: float64): void,
                     shared: bool = false
-                    ): CommandVariant =
+                    ): var CommandVariant =
     var flag = FlagVariantRef(kind: fkShortAndLong,
                                 shortName: shortName,
                                 longName: longName,
@@ -302,7 +302,7 @@ proc addFloatFlag* (com: var CommandVariant,
                     shortName: char,
                     callback: proc (val: float64): void,
                     shared: bool = false
-                    ): CommandVariant =
+                    ): var CommandVariant =
     var flag = FlagVariantRef(kind: fkShortOnly,
                                 chr: shortName,
                                 datatype: itFloat,
@@ -319,7 +319,7 @@ proc addFloatFlag* (com: var CommandVariant,
                     longName: string,
                     callback: proc (val: float64): void,
                     shared: bool = false
-                    ): CommandVariant =
+                    ): var CommandVariant =
     var flag = FlagVariantRef(kind: fkLongOnly,
                                 name: longName,
                                 datatype: itFloat,
@@ -337,7 +337,7 @@ proc addFloatFlag* (com: var CommandVariant,
                     longName: string,
                     reference: ref float64,
                     shared: bool = false
-                    ): CommandVariant =
+                    ): var CommandVariant =
     var flag = FlagVariantRef(kind: fkShortAndLong,
                                 shortName: shortName,
                                 longName: longName,
@@ -357,7 +357,7 @@ proc addFloatFlag* (com: var CommandVariant,
                     shortName: char,
                     reference: ref float64,
                     shared: bool = false
-                    ): CommandVariant =
+                    ): var CommandVariant =
     var flag = FlagVariantRef(kind: fkShortOnly,
                                 chr: shortName,
                                 datatype: itFloat,
@@ -374,7 +374,7 @@ proc addFloatFlag* (com: var CommandVariant,
                     longName: string,
                     reference: ref float64,
                     shared: bool = false
-                    ): CommandVariant =
+                    ): var CommandVariant =
     var flag = FlagVariantRef(kind: fkLongOnly,
                                 name: longName,
                                 datatype: itFloat,
@@ -393,7 +393,7 @@ proc addStringFlag* (com: var CommandVariant,
                     longName: string,
                     callback: proc (val: string): void,
                     shared: bool = false
-                    ): CommandVariant =
+                    ): var CommandVariant =
     var flag = FlagVariantRef(kind: fkShortAndLong,
                                 shortName: shortName,
                                 longName: longName,
@@ -413,7 +413,7 @@ proc addStringFlag* (com: var CommandVariant,
                     shortName: char,
                     callback: proc (val: string): void,
                     shared: bool = false
-                    ): CommandVariant =
+                    ): var CommandVariant =
     var flag = FlagVariantRef(kind: fkShortOnly,
                                 chr: shortName,
                                 datatype: itString,
@@ -430,7 +430,7 @@ proc addStringFlag* (com: var CommandVariant,
                     longName: string,
                     callback: proc (val: string): void,
                     shared: bool = false
-                    ): CommandVariant =
+                    ): var CommandVariant =
     var flag = FlagVariantRef(kind: fkLongOnly,
                                 name: longName,
                                 datatype: itString,
@@ -448,7 +448,7 @@ proc addStringFlag* (com: var CommandVariant,
                     longName: string,
                     reference: ref string,
                     shared: bool = false
-                    ): CommandVariant =
+                    ): var CommandVariant =
     var flag = FlagVariantRef(kind: fkShortAndLong,
                                 shortName: shortName,
                                 longName: longName,
@@ -468,7 +468,7 @@ proc addStringFlag* (com: var CommandVariant,
                     shortName: char,
                     reference: ref string,
                     shared: bool = false
-                    ): CommandVariant =
+                    ): var CommandVariant =
     var flag = FlagVariantRef(kind: fkShortOnly,
                                 chr: shortName,
                                 datatype: itString,
@@ -485,7 +485,7 @@ proc addStringFlag* (com: var CommandVariant,
                     longName: string,
                     reference: ref string,
                     shared: bool = false
-                    ): CommandVariant =
+                    ): var CommandVariant =
     var flag = FlagVariantRef(kind: fkLongOnly,
                                 name: longName,
                                 datatype: itString,
@@ -504,7 +504,7 @@ proc addBoolFlag* (com: var CommandVariant,
                     longName: string,
                     callback: proc (val: bool): void,
                     shared: bool = false
-                    ): CommandVariant =
+                    ): var CommandVariant =
     var flag = FlagVariantRef(kind: fkShortAndLong,
                                 shortName: shortName,
                                 longName: longName,
@@ -524,7 +524,7 @@ proc addBoolFlag* (com: var CommandVariant,
                     shortName: char,
                     callback: proc (val: bool): void,
                     shared: bool = false
-                    ): CommandVariant =
+                    ): var CommandVariant =
     var flag = FlagVariantRef(kind: fkShortOnly,
                                 chr: shortName,
                                 datatype: itBool,
@@ -541,7 +541,7 @@ proc addBoolFlag* (com: var CommandVariant,
                     longName: string,
                     callback: proc (val: bool): void,
                     shared: bool = false
-                    ): CommandVariant =
+                    ): var CommandVariant =
     var flag = FlagVariantRef(kind: fkLongOnly,
                                 name: longName,
                                 datatype: itBool,
@@ -559,7 +559,7 @@ proc addBoolFlag* (com: var CommandVariant,
                     longName: string,
                     reference: ref bool,
                     shared: bool = false
-                    ): CommandVariant =
+                    ): var CommandVariant =
     var flag = FlagVariantRef(kind: fkShortAndLong,
                                 shortName: shortName,
                                 longName: longName,
@@ -579,7 +579,7 @@ proc addBoolFlag* (com: var CommandVariant,
                     shortName: char,
                     reference: ref bool,
                     shared: bool = false
-                    ): CommandVariant =
+                    ): var CommandVariant =
     var flag = FlagVariantRef(kind: fkShortOnly,
                                 chr: shortName,
                                 datatype: itBool,
@@ -596,7 +596,7 @@ proc addBoolFlag* (com: var CommandVariant,
                     longName: string,
                     reference: ref bool,
                     shared: bool = false
-                    ): CommandVariant =
+                    ): var CommandVariant =
     var flag = FlagVariantRef(kind: fkLongOnly,
                                 name: longName,
                                 datatype: itBool,
@@ -615,7 +615,7 @@ proc addFuzzyBoolFlag* (com: var CommandVariant,
                     longName: string,
                     callback: proc (val: FuzzyBool): void,
                     shared: bool = false
-                    ): CommandVariant =
+                    ): var CommandVariant =
     var flag = FlagVariantRef(kind: fkShortAndLong,
                                 shortName: shortName,
                                 longName: longName,
@@ -635,7 +635,7 @@ proc addFuzzyBoolFlag* (com: var CommandVariant,
                     shortName: char,
                     callback: proc (val: FuzzyBool): void,
                     shared: bool = false
-                    ): CommandVariant =
+                    ): var CommandVariant =
     var flag = FlagVariantRef(kind: fkShortOnly,
                                 chr: shortName,
                                 datatype: itFuzzyBool,
@@ -652,7 +652,7 @@ proc addFuzzyBoolFlag* (com: var CommandVariant,
                     longName: string,
                     callback: proc (val: FuzzyBool): void,
                     shared: bool = false
-                    ): CommandVariant =
+                    ): var CommandVariant =
     var flag = FlagVariantRef(kind: fkLongOnly,
                                 name: longName,
                                 datatype: itFuzzyBool,
@@ -670,7 +670,7 @@ proc addFuzzyBoolFlag* (com: var CommandVariant,
                     longName: string,
                     reference: ref FuzzyBool,
                     shared: bool = false
-                    ): CommandVariant =
+                    ): var CommandVariant =
     var flag = FlagVariantRef(kind: fkShortAndLong,
                                 shortName: shortName,
                                 longName: longName,
@@ -690,7 +690,7 @@ proc addFuzzyBoolFlag* (com: var CommandVariant,
                     shortName: char,
                     reference: ref FuzzyBool,
                     shared: bool = false
-                    ): CommandVariant =
+                    ): var CommandVariant =
     var flag = FlagVariantRef(kind: fkShortOnly,
                                 chr: shortName,
                                 datatype: itFuzzyBool,
@@ -707,7 +707,7 @@ proc addFuzzyBoolFlag* (com: var CommandVariant,
                     longName: string,
                     reference: ref FuzzyBool,
                     shared: bool = false
-                    ): CommandVariant =
+                    ): var CommandVariant =
     var flag = FlagVariantRef(kind: fkLongOnly,
                                 name: longName,
                                 datatype: itFuzzyBool,
