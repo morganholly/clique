@@ -19,6 +19,10 @@ type
         itBool,
         itFuzzyBool
 
+    NoInputKind* = enum
+        nikHasNoInputAction,
+        nikRequiresInput
+
     FlagVariantRef* = ref FlagVariant
     FlagVariant* = object
         case kind*: FlagKind:
@@ -53,6 +57,18 @@ type
                 case actionFuzzyBool*: FlagAction:
                     of faCallback: callbackFuzzyBool*: proc (val: FuzzyBool): void
                     of faRef: refFuzzyBool*: ref FuzzyBool
+        case hasNoInputAction*: NoInputKind:
+            of nikHasNoInputAction:
+                case noInputType*: InputType:  # TODO add this to all the functions
+                    of itBool:
+                        discard
+                    of itInt, itFloat, itString, itFuzzyBool:
+                        noInputBool*: bool
+                        case noInputAction*: FlagAction:
+                            of faCallback: callbackNoInput*: proc (val: bool): void
+                            of faRef: refNoInput*: ref bool
+            of nikRequiresInput:
+                discard
         help*: string  # long
         info*: string # short
 
