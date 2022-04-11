@@ -57,27 +57,27 @@ proc `$`* (fv: FlagVariantRef): string =
                 result = result & $fv.chr & $fv.longName
         case fv.datatype:
             of itInt:
-                result = result & $fv.valInt
+                # result = result & $fv.valInt
                 case fv.actionInt:
                     of faCallback: result = result & "callbackInt"
                     of faRef: result = result & "refInt"
             of itFloat:
-                result = result & $fv.valFloat
+                # result = result & $fv.valFloat
                 case fv.actionFloat:
                     of faCallback: result = result & "callbackFloat"
                     of faRef: result = result & "refFloat"
             of itString:
-                result = result & $fv.valString
+                # result = result & $fv.valString
                 case fv.actionString:
                     of faCallback: result = result & "callbackString"
                     of faRef: result = result & "refString"
             of itBool:  # false by default
-                result = result & $fv.valBool
+                # result = result & $fv.valBool
                 case fv.actionBool:
                     of faCallback: result = result & "callbackBool"
                     of faRef: result = result & "refBool"
             of itFuzzyBool:  # fbUncertain by default
-                result = result & $fv.valFuzzyBool
+                # result = result & $fv.valFuzzyBool
                 case fv.actionFuzzyBool:
                     of faCallback: result = result & "callbackFuzzyBool"
                     of faRef: result = result & "refFuzzyBool"
@@ -85,7 +85,7 @@ proc `$`* (fv: FlagVariantRef): string =
         result = result & fv.info
 
 
-proc action* (fv: var FlagVariant): void =
+proc action* (fv: var FlagVariantRef): void =
     case fv.datatype:
         of itInt:
             case fv.actionInt:
@@ -108,7 +108,7 @@ proc action* (fv: var FlagVariant): void =
                 of faCallback: fv.callbackFuzzyBool(fv.valFuzzyBool)
                 of faRef: fv.refFuzzyBool[] = fv.valFuzzyBool
 
-proc action*[T] (fv: var FlagVariant, value: T): void =
+proc action*[T] (fv: var FlagVariantRef, value: T): void =
     case fv.datatype:
         of itInt:
             case fv.actionInt:
@@ -131,7 +131,7 @@ proc action*[T] (fv: var FlagVariant, value: T): void =
                 of faCallback: fv.callbackFuzzyBool(value)
                 of faRef: fv.refFuzzyBool[] = value
 
-proc action* (fv: var FlagVariant, value: string): void =
+proc action* (fv: var FlagVariantRef, value: string): void =
     case fv.datatype:
         of itInt:
             case fv.actionInt:
@@ -147,14 +147,14 @@ proc action* (fv: var FlagVariant, value: string): void =
                 of faRef: fv.refString[] = value
         of itBool:
             case fv.actionBool:
-                of faCallback: fv.callbackBool(parseBool(value))
-                of faRef: fv.refBool[] = parseBool(value)
+                of faCallback: fv.callbackBool(if len(value) > 0: parseBool(value) else: true)
+                of faRef: fv.refBool[] = if len(value) > 0: parseBool(value) else: true
         of itFuzzyBool:
             case fv.actionFuzzyBool:
                 of faCallback: fv.callbackFuzzyBool(parseFuzzyBool(value))
                 of faRef: fv.refFuzzyBool[] = parseFuzzyBool(value)
 
-proc setValue*[T] (fv: var FlagVariant, value: T): void =
+proc setValue*[T] (fv: var FlagVariantRef, value: T): void =
     case fv.datatype:
         of itInt:
             fv.valInt = value
@@ -167,7 +167,7 @@ proc setValue*[T] (fv: var FlagVariant, value: T): void =
         of itFuzzyBool:
             fv.valFuzzyBool = value
 
-proc setValue* (fv: var FlagVariant, value: string): void =
+proc setValue* (fv: var FlagVariantRef, value: string): void =
     case fv.datatype:
         of itInt:
             fv.valInt = parseInt(value)
@@ -176,6 +176,6 @@ proc setValue* (fv: var FlagVariant, value: string): void =
         of itString:
             fv.valString = value
         of itBool:
-            fv.valBool = parseBool(value)
+            fv.valBool = if len(value) > 0: parseBool(value) else: true
         of itFuzzyBool:
             fv.valFuzzyBool = parseFuzzyBool(value)
