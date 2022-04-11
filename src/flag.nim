@@ -104,6 +104,18 @@ proc `$`* (fv: FlagVariantRef): string =
                 case fv.actionFuzzyBool:
                     of faCallback: result = result & "callbackFuzzyBool"
                     of faRef: result = result & "refFuzzyBool"
+        case fv.hasNoInputAction:
+            of nikHasNoInputAction:
+                case fv.noInputType:
+                    of itBool:
+                        discard
+                    of itInt, itFloat, itString, itFuzzyBool:
+                        # result = result & fv.noInputBool
+                        case fv.noInputAction:
+                            of faCallback: result = result & "callbackNoInput"
+                            of faRef: result = result & "refNoInput"
+            of nikRequiresInput:
+                discard
         result = result & fv.help
         result = result & fv.info
 
@@ -177,6 +189,19 @@ proc action* (fv: var FlagVariantRef, value: string): void =
                 of faCallback: fv.callbackFuzzyBool(parseFuzzyBool(value))
                 of faRef: fv.refFuzzyBool[] = parseFuzzyBool(value)
 
+proc actionNoInput* (fv: var FlagVariantRef): void =
+    case fv.hasNoInputAction:
+        of nikHasNoInputAction:
+            case fv.noInputType:
+                of itBool:
+                    discard
+                of itInt, itFloat, itString, itFuzzyBool:
+                    case fv.noInputAction:
+                        of faCallback: fv.callbackNoInput(true)
+                        of faRef: fv.refNoInput[] = true
+        of nikRequiresInput:
+            discard
+
 proc setValue*[T] (fv: var FlagVariantRef, value: T): void =
     case fv.datatype:
         of itInt:
@@ -189,6 +214,15 @@ proc setValue*[T] (fv: var FlagVariantRef, value: T): void =
             fv.valBool = value
         of itFuzzyBool:
             fv.valFuzzyBool = value
+    case fv.hasNoInputAction:
+        of nikHasNoInputAction:
+            case fv.noInputType:
+                of itBool:
+                    discard
+                of itInt, itFloat, itString, itFuzzyBool:
+                    fv.noInputBool = value
+        of nikRequiresInput:
+            discard
 
 proc setValue* (fv: var FlagVariantRef, value: string): void =
     case fv.datatype:
@@ -202,3 +236,12 @@ proc setValue* (fv: var FlagVariantRef, value: string): void =
             fv.valBool = if len(value) > 0: parseBool(value) else: true
         of itFuzzyBool:
             fv.valFuzzyBool = parseFuzzyBool(value)
+    case fv.hasNoInputAction:
+        of nikHasNoInputAction:
+            case fv.noInputType:
+                of itBool:
+                    discard
+                of itInt, itFloat, itString, itFuzzyBool:
+                    fv.noInputBool = if len(value) > 0: parseBool(value) else: true
+        of nikRequiresInput:
+            discard
