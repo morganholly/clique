@@ -12,6 +12,13 @@ type
         faCallback,
         faRef
 
+    InputType* = enum
+        itInt,
+        itFloat,
+        itString,
+        itBool,
+        itFuzzyBool
+
     FlagVariantRef* = ref FlagVariant
     FlagVariant* = object
         case kind*: FlagKind:
