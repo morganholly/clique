@@ -33,27 +33,59 @@ type
         parent*: CommandVariant
 
 proc `$`* (com: CommandVariant): string =
-        case com.kind:
-            of ckCommand:
-                result = com.name & com.info & com.help & $com.subcommands & $com.flagsShort & $com.flagsLong & $com.sharedFlagsShort & $com.sharedFlagsLong
-            of ckAlias:
-                result = "alias"
+    case com.kind:
+        of ckCommand:
+            result = com.name & com.info & com.help & "\n" & $com.subcommands & "\nfs " & $com.flagsShort & "\nfl " & $com.flagsLong & "\nsfs " & $com.sharedFlagsShort & "\nsfl " & $com.sharedFlagsLong
+        of ckAlias:
+            result = "alias"
 
 proc parse* (com: var CommandVariant, params: seq[string], root: CommandVariant, readOffset: range[0 .. high(int)] = 0): void =
     echo("parse")
     echo(len(params), params, readOffset)
     if (len(params) - readOffset) > 0:
         echo("has params")
-        if params[readOffset].startsWith("-"):
-            echo("flag, currently not implimented")
-            discard  # flag
+        var value = params[readOffset]
+        if value.startsWith("--"):
+            echo("long flag")
+            var vnodash = value.replace("-", "")
+            if vnodash in com.flagsLong:
+                echo("command has flag")
+                if com.flagsLong[vnodash].datatype != itBool:
+                    if (len(params) - readOffset) > 1:
+                        com.flagsLong[vnodash].action(params[readOffset + 1])
+                        parse(com, params, root, readOffset + 2)
+                    else:
+                        raise newException(ValueError, "Missing value for flag")
+                else:
+                    com.flagsLong[vnodash].action("")
+                    parse(com, params, root, readOffset + 1)
+            else:
+                echo("recurse up")
+                var current: CommandVariant = com.parent
+                while current != root:
+                    if vnodash in current.sharedFlagsLong:
+                        if current.sharedFlagsLong[vnodash].datatype != itBool:
+                            if (len(params) - readOffset) > 1:
+                                current.sharedFlagsLong[vnodash].action(params[readOffset + 1])
+                                parse(current, params, root, readOffset + 2)
+                            else:
+                                raise newException(ValueError, "Missing value for flag")
+                        else:
+                            current.sharedFlagsLong[vnodash].action("")
+                            parse(current, params, root, readOffset + 1)
+                        break
+                    else:
+                        echo(current.parent.name)
+                        current = current.parent
+        elif value.startsWith("-"):
+            echo("short flag")
         else:
             echo("subcommand or input")
-            echo($com.subcommands)
-            echo(params[readOffset])
-            if params[readOffset] in com.subcommands:
+            echo($com)
+            echo(value)
+            if value in com.subcommands:
                 echo("subcommand")
-                var subcommand = com.subcommands[params[readOffset]]
+                var subcommand = com.subcommands[value]
                 case subcommand.kind:
                     of ckCommand:
                         echo("command")
