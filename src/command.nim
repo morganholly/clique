@@ -781,3 +781,720 @@ proc addFuzzyBoolFlag* (com: var CommandVariant,
     else:
         com.flagsLong[longName] = flag
     result = com
+
+
+proc addIntFlag* (com: var CommandVariant,
+                    shortName: char,
+                    longName: string,
+                    callback: proc (val: int64): void,
+                    shared: bool = false,
+                    callbackNoInput: proc (val: bool): void,
+                    ): var CommandVariant =
+    var flag = FlagVariantRef(kind: fkShortAndLong,
+                                shortName: shortName,
+                                longName: longName,
+                                datatype: itInt,
+                                valInt: 0,
+                                actionInt: faCallback,
+                                callbackInt: callback,
+                                hasNoInputAction: nikHasNoInputAction,
+                                noInputType: itInt,
+                                noInputBool: false,
+                                noInputAction: faCallback,
+                                callbackNoInput: callbackNoInput)
+    if shared:
+        com.sharedFlagsShort[shortName] = flag
+        com.sharedFlagsLong[longName] = flag
+    else:
+        com.flagsShort[shortName] = flag
+        com.flagsLong[longName] = flag
+    result = com
+
+proc addIntFlag* (com: var CommandVariant,
+                    shortName: char,
+                    callback: proc (val: int64): void,
+                    shared: bool = false,
+                    callbackNoInput: proc (val: bool): void,
+                    ): var CommandVariant =
+    var flag = FlagVariantRef(kind: fkShortOnly,
+                                chr: shortName,
+                                datatype: itInt,
+                                valInt: 0,
+                                actionInt: faCallback,
+                                callbackInt: callback,
+                                hasNoInputAction: nikHasNoInputAction,
+                                noInputType: itInt,
+                                noInputBool: false,
+                                noInputAction: faCallback,
+                                callbackNoInput: callbackNoInput)
+    if shared:
+        com.sharedFlagsShort[shortName] = flag
+    else:
+        com.flagsShort[shortName] = flag
+    result = com
+
+proc addIntFlag* (com: var CommandVariant,
+                    longName: string,
+                    callback: proc (val: int64): void,
+                    shared: bool = false,
+                    callbackNoInput: proc (val: bool): void,
+                    ): var CommandVariant =
+    var flag = FlagVariantRef(kind: fkLongOnly,
+                                name: longName,
+                                datatype: itInt,
+                                valInt: 0,
+                                actionInt: faCallback,
+                                callbackInt: callback,
+                                hasNoInputAction: nikHasNoInputAction,
+                                noInputType: itInt,
+                                noInputBool: false,
+                                noInputAction: faCallback,
+                                callbackNoInput: callbackNoInput)
+    if shared:
+        com.sharedFlagsLong[longName] = flag
+    else:
+        com.flagsLong[longName] = flag
+    result = com
+
+proc addIntFlag* (com: var CommandVariant,
+                    shortName: char,
+                    longName: string,
+                    reference: ref int64,
+                    shared: bool = false,
+                    refNoInput: ref bool
+                    ): var CommandVariant =
+    var flag = FlagVariantRef(kind: fkShortAndLong,
+                                shortName: shortName,
+                                longName: longName,
+                                datatype: itInt,
+                                valInt: 0,
+                                actionInt: faRef,
+                                refInt: reference,
+                                hasNoInputAction: nikHasNoInputAction,
+                                noInputType: itInt,
+                                noInputBool: true,
+                                noInputAction: faRef,
+                                refNoInput: refNoInput)
+    if shared:
+        com.sharedFlagsShort[shortName] = flag
+        com.sharedFlagsLong[longName] = flag
+    else:
+        com.flagsShort[shortName] = flag
+        com.flagsLong[longName] = flag
+    result = com
+
+proc addIntFlag* (com: var CommandVariant,
+                    shortName: char,
+                    reference: ref int64,
+                    shared: bool = false,
+                    refNoInput: ref bool
+                    ): var CommandVariant =
+    var flag = FlagVariantRef(kind: fkShortOnly,
+                                chr: shortName,
+                                datatype: itInt,
+                                valInt: 0,
+                                actionInt: faRef,
+                                refInt: reference,
+                                hasNoInputAction: nikHasNoInputAction,
+                                noInputType: itInt,
+                                noInputBool: true,
+                                noInputAction: faRef,
+                                refNoInput: refNoInput)
+    if shared:
+        com.sharedFlagsShort[shortName] = flag
+    else:
+        com.flagsShort[shortName] = flag
+    result = com
+
+proc addIntFlag* (com: var CommandVariant,
+                    longName: string,
+                    reference: ref int64,
+                    shared: bool = false,
+                    refNoInput: ref bool
+                    ): var CommandVariant =
+    var flag = FlagVariantRef(kind: fkLongOnly,
+                                name: longName,
+                                datatype: itInt,
+                                valInt: 0,
+                                actionInt: faRef,
+                                refInt: reference,
+                                hasNoInputAction: nikHasNoInputAction,
+                                noInputType: itInt,
+                                noInputBool: true,
+                                noInputAction: faRef,
+                                refNoInput: refNoInput)
+    if shared:
+        com.sharedFlagsLong[longName] = flag
+    else:
+        com.flagsLong[longName] = flag
+    result = com
+
+
+proc addFloatFlag* (com: var CommandVariant,
+                    shortName: char,
+                    longName: string,
+                    callback: proc (val: float64): void,
+                    shared: bool = false,
+                    callbackNoInput: proc (val: bool): void,
+                    ): var CommandVariant =
+    var flag = FlagVariantRef(kind: fkShortAndLong,
+                                shortName: shortName,
+                                longName: longName,
+                                datatype: itFloat,
+                                valFloat: 0.0,
+                                actionFloat: faCallback,
+                                callbackFloat: callback,
+                                hasNoInputAction: nikHasNoInputAction,
+                                noInputType: itFloat,
+                                noInputBool: false,
+                                noInputAction: faCallback,
+                                callbackNoInput: callbackNoInput)
+    if shared:
+        com.sharedFlagsShort[shortName] = flag
+        com.sharedFlagsLong[longName] = flag
+    else:
+        com.flagsShort[shortName] = flag
+        com.flagsLong[longName] = flag
+    result = com
+
+proc addFloatFlag* (com: var CommandVariant,
+                    shortName: char,
+                    callback: proc (val: float64): void,
+                    shared: bool = false,
+                    callbackNoInput: proc (val: bool): void,
+                    ): var CommandVariant =
+    var flag = FlagVariantRef(kind: fkShortOnly,
+                                chr: shortName,
+                                datatype: itFloat,
+                                valFloat: 0.0,
+                                actionFloat: faCallback,
+                                callbackFloat: callback,
+                                hasNoInputAction: nikHasNoInputAction,
+                                noInputType: itFloat,
+                                noInputBool: false,
+                                noInputAction: faCallback,
+                                callbackNoInput: callbackNoInput)
+    if shared:
+        com.sharedFlagsShort[shortName] = flag
+    else:
+        com.flagsShort[shortName] = flag
+    result = com
+
+proc addFloatFlag* (com: var CommandVariant,
+                    longName: string,
+                    callback: proc (val: float64): void,
+                    shared: bool = false,
+                    callbackNoInput: proc (val: bool): void,
+                    ): var CommandVariant =
+    var flag = FlagVariantRef(kind: fkLongOnly,
+                                name: longName,
+                                datatype: itFloat,
+                                valFloat: 0.0,
+                                actionFloat: faCallback,
+                                callbackFloat: callback,
+                                hasNoInputAction: nikHasNoInputAction,
+                                noInputType: itFloat,
+                                noInputBool: false,
+                                noInputAction: faCallback,
+                                callbackNoInput: callbackNoInput)
+    if shared:
+        com.sharedFlagsLong[longName] = flag
+    else:
+        com.flagsLong[longName] = flag
+    result = com
+
+proc addFloatFlag* (com: var CommandVariant,
+                    shortName: char,
+                    longName: string,
+                    reference: ref float64,
+                    shared: bool = false,
+                    refNoInput: ref bool,
+                    ): var CommandVariant =
+    var flag = FlagVariantRef(kind: fkShortAndLong,
+                                shortName: shortName,
+                                longName: longName,
+                                datatype: itFloat,
+                                valFloat: 0.0,
+                                actionFloat: faRef,
+                                refFloat: reference,
+                                hasNoInputAction: nikHasNoInputAction,
+                                noInputType: itFloat,
+                                noInputBool: false,
+                                noInputAction: faRef,
+                                refNoInput: refNoInput)
+    if shared:
+        com.sharedFlagsShort[shortName] = flag
+        com.sharedFlagsLong[longName] = flag
+    else:
+        com.flagsShort[shortName] = flag
+        com.flagsLong[longName] = flag
+    result = com
+
+proc addFloatFlag* (com: var CommandVariant,
+                    shortName: char,
+                    reference: ref float64,
+                    shared: bool = false,
+                    refNoInput: ref bool,
+                    ): var CommandVariant =
+    var flag = FlagVariantRef(kind: fkShortOnly,
+                                chr: shortName,
+                                datatype: itFloat,
+                                valFloat: 0.0,
+                                actionFloat: faRef,
+                                refFloat: reference,
+                                hasNoInputAction: nikHasNoInputAction,
+                                noInputType: itFloat,
+                                noInputBool: false,
+                                noInputAction: faRef,
+                                refNoInput: refNoInput)
+    if shared:
+        com.sharedFlagsShort[shortName] = flag
+    else:
+        com.flagsShort[shortName] = flag
+    result = com
+
+proc addFloatFlag* (com: var CommandVariant,
+                    longName: string,
+                    reference: ref float64,
+                    shared: bool = false,
+                    refNoInput: ref bool,
+                    ): var CommandVariant =
+    var flag = FlagVariantRef(kind: fkLongOnly,
+                                name: longName,
+                                datatype: itFloat,
+                                valFloat: 0.0,
+                                actionFloat: faRef,
+                                refFloat: reference,
+                                hasNoInputAction: nikHasNoInputAction,
+                                noInputType: itFloat,
+                                noInputBool: false,
+                                noInputAction: faRef,
+                                refNoInput: refNoInput)
+    if shared:
+        com.sharedFlagsLong[longName] = flag
+    else:
+        com.flagsLong[longName] = flag
+    result = com
+
+
+proc addStringFlag* (com: var CommandVariant,
+                    shortName: char,
+                    longName: string,
+                    callback: proc (val: string): void,
+                    shared: bool = false,
+                    callbackNoInput: proc (val: bool): void,
+                    ): var CommandVariant =
+    var flag = FlagVariantRef(kind: fkShortAndLong,
+                                shortName: shortName,
+                                longName: longName,
+                                datatype: itString,
+                                valString: "",
+                                actionString: faCallback,
+                                callbackString: callback,
+                                hasNoInputAction: nikHasNoInputAction,
+                                noInputType: itString,
+                                noInputBool: false,
+                                noInputAction: faCallback,
+                                callbackNoInput: callbackNoInput)
+    if shared:
+        com.sharedFlagsShort[shortName] = flag
+        com.sharedFlagsLong[longName] = flag
+    else:
+        com.flagsShort[shortName] = flag
+        com.flagsLong[longName] = flag
+    result = com
+
+proc addStringFlag* (com: var CommandVariant,
+                    shortName: char,
+                    callback: proc (val: string): void,
+                    shared: bool = false,
+                    callbackNoInput: proc (val: bool): void,
+                    ): var CommandVariant =
+    var flag = FlagVariantRef(kind: fkShortOnly,
+                                chr: shortName,
+                                datatype: itString,
+                                valString: "",
+                                actionString: faCallback,
+                                callbackString: callback,
+                                hasNoInputAction: nikHasNoInputAction,
+                                noInputType: itString,
+                                noInputBool: false,
+                                noInputAction: faCallback,
+                                callbackNoInput: callbackNoInput)
+    if shared:
+        com.sharedFlagsShort[shortName] = flag
+    else:
+        com.flagsShort[shortName] = flag
+    result = com
+
+proc addStringFlag* (com: var CommandVariant,
+                    longName: string,
+                    callback: proc (val: string): void,
+                    shared: bool = false,
+                    callbackNoInput: proc (val: bool): void,
+                    ): var CommandVariant =
+    var flag = FlagVariantRef(kind: fkLongOnly,
+                                name: longName,
+                                datatype: itString,
+                                valString: "",
+                                actionString: faCallback,
+                                callbackString: callback,
+                                hasNoInputAction: nikHasNoInputAction,
+                                noInputType: itString,
+                                noInputBool: false,
+                                noInputAction: faCallback,
+                                callbackNoInput: callbackNoInput)
+    if shared:
+        com.sharedFlagsLong[longName] = flag
+    else:
+        com.flagsLong[longName] = flag
+    result = com
+
+proc addStringFlag* (com: var CommandVariant,
+                    shortName: char,
+                    longName: string,
+                    reference: ref string,
+                    shared: bool = false,
+                    refNoInput: ref bool,
+                    ): var CommandVariant =
+    var flag = FlagVariantRef(kind: fkShortAndLong,
+                                shortName: shortName,
+                                longName: longName,
+                                datatype: itString,
+                                valString: "",
+                                actionString: faRef,
+                                refString: reference,
+                                hasNoInputAction: nikHasNoInputAction,
+                                noInputType: itString,
+                                noInputBool: false,
+                                noInputAction: faRef,
+                                refNoInput: refNoInput)
+    if shared:
+        com.sharedFlagsShort[shortName] = flag
+        com.sharedFlagsLong[longName] = flag
+    else:
+        com.flagsShort[shortName] = flag
+        com.flagsLong[longName] = flag
+    result = com
+
+proc addStringFlag* (com: var CommandVariant,
+                    shortName: char,
+                    reference: ref string,
+                    shared: bool = false,
+                    refNoInput: ref bool,
+                    ): var CommandVariant =
+    var flag = FlagVariantRef(kind: fkShortOnly,
+                                chr: shortName,
+                                datatype: itString,
+                                valString: "",
+                                actionString: faRef,
+                                refString: reference,
+                                hasNoInputAction: nikHasNoInputAction,
+                                noInputType: itString,
+                                noInputBool: false,
+                                noInputAction: faRef,
+                                refNoInput: refNoInput)
+    if shared:
+        com.sharedFlagsShort[shortName] = flag
+    else:
+        com.flagsShort[shortName] = flag
+    result = com
+
+proc addStringFlag* (com: var CommandVariant,
+                    longName: string,
+                    reference: ref string,
+                    shared: bool = false,
+                    refNoInput: ref bool,
+                    ): var CommandVariant =
+    var flag = FlagVariantRef(kind: fkLongOnly,
+                                name: longName,
+                                datatype: itString,
+                                valString: "",
+                                actionString: faRef,
+                                refString: reference,
+                                hasNoInputAction: nikHasNoInputAction,
+                                noInputType: itString,
+                                noInputBool: false,
+                                noInputAction: faRef,
+                                refNoInput: refNoInput)
+    if shared:
+        com.sharedFlagsLong[longName] = flag
+    else:
+        com.flagsLong[longName] = flag
+    result = com
+
+
+proc addBoolFlag* (com: var CommandVariant,
+                    shortName: char,
+                    longName: string,
+                    callback: proc (val: bool): void,
+                    shared: bool = false,
+                    callbackNoInput: proc (val: bool): void,
+                    ): var CommandVariant =
+    var flag = FlagVariantRef(kind: fkShortAndLong,
+                                shortName: shortName,
+                                longName: longName,
+                                datatype: itBool,
+                                valBool: false,
+                                actionBool: faCallback,
+                                callbackBool: callback,
+                                hasNoInputAction: nikHasNoInputAction,
+                                noInputType: itBool)
+    if shared:
+        com.sharedFlagsShort[shortName] = flag
+        com.sharedFlagsLong[longName] = flag
+    else:
+        com.flagsShort[shortName] = flag
+        com.flagsLong[longName] = flag
+    result = com
+
+proc addBoolFlag* (com: var CommandVariant,
+                    shortName: char,
+                    callback: proc (val: bool): void,
+                    shared: bool = false,
+                    callbackNoInput: proc (val: bool): void,
+                    ): var CommandVariant =
+    var flag = FlagVariantRef(kind: fkShortOnly,
+                                chr: shortName,
+                                datatype: itBool,
+                                valBool: false,
+                                actionBool: faCallback,
+                                callbackBool: callback,
+                                hasNoInputAction: nikHasNoInputAction,
+                                noInputType: itBool)
+    if shared:
+        com.sharedFlagsShort[shortName] = flag
+    else:
+        com.flagsShort[shortName] = flag
+    result = com
+
+proc addBoolFlag* (com: var CommandVariant,
+                    longName: string,
+                    callback: proc (val: bool): void,
+                    shared: bool = false,
+                    callbackNoInput: proc (val: bool): void,
+                    ): var CommandVariant =
+    var flag = FlagVariantRef(kind: fkLongOnly,
+                                name: longName,
+                                datatype: itBool,
+                                valBool: false,
+                                actionBool: faCallback,
+                                callbackBool: callback,
+                                hasNoInputAction: nikHasNoInputAction,
+                                noInputType: itBool)
+    if shared:
+        com.sharedFlagsLong[longName] = flag
+    else:
+        com.flagsLong[longName] = flag
+    result = com
+
+proc addBoolFlag* (com: var CommandVariant,
+                    shortName: char,
+                    longName: string,
+                    reference: ref bool,
+                    shared: bool = false,
+                    refNoInput: ref bool
+                    ): var CommandVariant =
+    var flag = FlagVariantRef(kind: fkShortAndLong,
+                                shortName: shortName,
+                                longName: longName,
+                                datatype: itBool,
+                                valBool: false,
+                                actionBool: faRef,
+                                refBool: reference,
+                                hasNoInputAction: nikHasNoInputAction,
+                                noInputType: itBool)
+    if shared:
+        com.sharedFlagsShort[shortName] = flag
+        com.sharedFlagsLong[longName] = flag
+    else:
+        com.flagsShort[shortName] = flag
+        com.flagsLong[longName] = flag
+    result = com
+
+proc addBoolFlag* (com: var CommandVariant,
+                    shortName: char,
+                    reference: ref bool,
+                    shared: bool = false,
+                    refNoInput: ref bool
+                    ): var CommandVariant =
+    var flag = FlagVariantRef(kind: fkShortOnly,
+                                chr: shortName,
+                                datatype: itBool,
+                                valBool: false,
+                                actionBool: faRef,
+                                refBool: reference,
+                                hasNoInputAction: nikHasNoInputAction,
+                                noInputType: itBool)
+    if shared:
+        com.sharedFlagsShort[shortName] = flag
+    else:
+        com.flagsShort[shortName] = flag
+    result = com
+
+proc addBoolFlag* (com: var CommandVariant,
+                    longName: string,
+                    reference: ref bool,
+                    shared: bool = false,
+                    refNoInput: ref bool
+                    ): var CommandVariant =
+    var flag = FlagVariantRef(kind: fkLongOnly,
+                                name: longName,
+                                datatype: itBool,
+                                valBool: false,
+                                actionBool: faRef,
+                                refBool: reference,
+                                hasNoInputAction: nikHasNoInputAction,
+                                noInputType: itBool)
+    if shared:
+        com.sharedFlagsLong[longName] = flag
+    else:
+        com.flagsLong[longName] = flag
+    result = com
+
+
+proc addFuzzyBoolFlag* (com: var CommandVariant,
+                    shortName: char,
+                    longName: string,
+                    callback: proc (val: FuzzyBool): void,
+                    shared: bool = false,
+                    callbackNoInput: proc (val: bool): void,
+                    ): var CommandVariant =
+    var flag = FlagVariantRef(kind: fkShortAndLong,
+                                shortName: shortName,
+                                longName: longName,
+                                datatype: itFuzzyBool,
+                                valFuzzyBool: fbUncertain,
+                                actionFuzzyBool: faCallback,
+                                callbackFuzzyBool: callback,
+                                hasNoInputAction: nikHasNoInputAction,
+                                noInputType: itFuzzyBool,
+                                noInputBool: false,
+                                noInputAction: faCallback,
+                                callbackNoInput: callbackNoInput,)
+    if shared:
+        com.sharedFlagsShort[shortName] = flag
+        com.sharedFlagsLong[longName] = flag
+    else:
+        com.flagsShort[shortName] = flag
+        com.flagsLong[longName] = flag
+    result = com
+
+proc addFuzzyBoolFlag* (com: var CommandVariant,
+                    shortName: char,
+                    callback: proc (val: FuzzyBool): void,
+                    shared: bool = false,
+                    callbackNoInput: proc (val: bool): void,
+                    ): var CommandVariant =
+    var flag = FlagVariantRef(kind: fkShortOnly,
+                                chr: shortName,
+                                datatype: itFuzzyBool,
+                                valFuzzyBool: fbUncertain,
+                                actionFuzzyBool: faCallback,
+                                callbackFuzzyBool: callback,
+                                hasNoInputAction: nikHasNoInputAction,
+                                noInputType: itFuzzyBool,
+                                noInputBool: false,
+                                noInputAction: faCallback,
+                                callbackNoInput: callbackNoInput,)
+    if shared:
+        com.sharedFlagsShort[shortName] = flag
+    else:
+        com.flagsShort[shortName] = flag
+    result = com
+
+proc addFuzzyBoolFlag* (com: var CommandVariant,
+                    longName: string,
+                    callback: proc (val: FuzzyBool): void,
+                    shared: bool = false,
+                    callbackNoInput: proc (val: bool): void,
+                    ): var CommandVariant =
+    var flag = FlagVariantRef(kind: fkLongOnly,
+                                name: longName,
+                                datatype: itFuzzyBool,
+                                valFuzzyBool: fbUncertain,
+                                actionFuzzyBool: faCallback,
+                                callbackFuzzyBool: callback,
+                                hasNoInputAction: nikHasNoInputAction,
+                                noInputType: itFuzzyBool,
+                                noInputBool: false,
+                                noInputAction: faCallback,
+                                callbackNoInput: callbackNoInput,)
+    if shared:
+        com.sharedFlagsLong[longName] = flag
+    else:
+        com.flagsLong[longName] = flag
+    result = com
+
+proc addFuzzyBoolFlag* (com: var CommandVariant,
+                    shortName: char,
+                    longName: string,
+                    reference: ref FuzzyBool,
+                    shared: bool = false,
+                    refNoInput: ref bool,
+                    ): var CommandVariant =
+    var flag = FlagVariantRef(kind: fkShortAndLong,
+                                shortName: shortName,
+                                longName: longName,
+                                datatype: itFuzzyBool,
+                                valFuzzyBool: fbUncertain,
+                                actionFuzzyBool: faRef,
+                                refFuzzyBool: reference,
+                                hasNoInputAction: nikHasNoInputAction,
+                                noInputType: itFuzzyBool,
+                                noInputBool: false,
+                                noInputAction: faRef,
+                                refNoInput: refNoInput,)
+    if shared:
+        com.sharedFlagsShort[shortName] = flag
+        com.sharedFlagsLong[longName] = flag
+    else:
+        com.flagsShort[shortName] = flag
+        com.flagsLong[longName] = flag
+    result = com
+
+proc addFuzzyBoolFlag* (com: var CommandVariant,
+                    shortName: char,
+                    reference: ref FuzzyBool,
+                    shared: bool = false,
+                    refNoInput: ref bool,
+                    ): var CommandVariant =
+    var flag = FlagVariantRef(kind: fkShortOnly,
+                                chr: shortName,
+                                datatype: itFuzzyBool,
+                                valFuzzyBool: fbUncertain,
+                                actionFuzzyBool: faRef,
+                                refFuzzyBool: reference,
+                                hasNoInputAction: nikHasNoInputAction,
+                                noInputType: itFuzzyBool,
+                                noInputBool: false,
+                                noInputAction: faRef,
+                                refNoInput: refNoInput,)
+    if shared:
+        com.sharedFlagsShort[shortName] = flag
+    else:
+        com.flagsShort[shortName] = flag
+    result = com
+
+proc addFuzzyBoolFlag* (com: var CommandVariant,
+                    longName: string,
+                    reference: ref FuzzyBool,
+                    shared: bool = false,
+                    refNoInput: ref bool,
+                    ): var CommandVariant =
+    var flag = FlagVariantRef(kind: fkLongOnly,
+                                name: longName,
+                                datatype: itFuzzyBool,
+                                valFuzzyBool: fbUncertain,
+                                actionFuzzyBool: faRef,
+                                refFuzzyBool: reference,
+                                hasNoInputAction: nikHasNoInputAction,
+                                noInputType: itFuzzyBool,
+                                noInputBool: false,
+                                noInputAction: faRef,
+                                refNoInput: refNoInput,)
+    if shared:
+        com.sharedFlagsLong[longName] = flag
+    else:
+        com.flagsLong[longName] = flag
+    result = com
