@@ -210,7 +210,8 @@ proc addIntFlag* (com: var CommandVariant,
                                 datatype: itInt,
                                 valInt: 0,
                                 actionInt: faCallback,
-                                callbackInt: callback)
+                                callbackInt: callback,
+                                hasNoInputAction: nikRequiresInput)
     if shared:
         com.sharedFlagsShort[shortName] = flag
         com.sharedFlagsLong[longName] = flag
@@ -229,7 +230,8 @@ proc addIntFlag* (com: var CommandVariant,
                                 datatype: itInt,
                                 valInt: 0,
                                 actionInt: faCallback,
-                                callbackInt: callback)
+                                callbackInt: callback,
+                                hasNoInputAction: nikRequiresInput)
     if shared:
         com.sharedFlagsShort[shortName] = flag
     else:
@@ -246,7 +248,8 @@ proc addIntFlag* (com: var CommandVariant,
                                 datatype: itInt,
                                 valInt: 0,
                                 actionInt: faCallback,
-                                callbackInt: callback)
+                                callbackInt: callback,
+                                hasNoInputAction: nikRequiresInput)
     if shared:
         com.sharedFlagsLong[longName] = flag
     else:
@@ -265,7 +268,8 @@ proc addIntFlag* (com: var CommandVariant,
                                 datatype: itInt,
                                 valInt: 0,
                                 actionInt: faRef,
-                                refInt: reference)
+                                refInt: reference,
+                                hasNoInputAction: nikRequiresInput)
     if shared:
         com.sharedFlagsShort[shortName] = flag
         com.sharedFlagsLong[longName] = flag
@@ -284,7 +288,8 @@ proc addIntFlag* (com: var CommandVariant,
                                 datatype: itInt,
                                 valInt: 0,
                                 actionInt: faRef,
-                                refInt: reference)
+                                refInt: reference,
+                                hasNoInputAction: nikRequiresInput)
     if shared:
         com.sharedFlagsShort[shortName] = flag
     else:
@@ -301,7 +306,8 @@ proc addIntFlag* (com: var CommandVariant,
                                 datatype: itInt,
                                 valInt: 0,
                                 actionInt: faRef,
-                                refInt: reference)
+                                refInt: reference,
+                                hasNoInputAction: nikRequiresInput)
     if shared:
         com.sharedFlagsLong[longName] = flag
     else:
@@ -321,7 +327,8 @@ proc addFloatFlag* (com: var CommandVariant,
                                 datatype: itFloat,
                                 valFloat: 0.0,
                                 actionFloat: faCallback,
-                                callbackFloat: callback)
+                                callbackFloat: callback,
+                                hasNoInputAction: nikRequiresInput)
     if shared:
         com.sharedFlagsShort[shortName] = flag
         com.sharedFlagsLong[longName] = flag
@@ -340,7 +347,8 @@ proc addFloatFlag* (com: var CommandVariant,
                                 datatype: itFloat,
                                 valFloat: 0.0,
                                 actionFloat: faCallback,
-                                callbackFloat: callback)
+                                callbackFloat: callback,
+                                hasNoInputAction: nikRequiresInput)
     if shared:
         com.sharedFlagsShort[shortName] = flag
     else:
@@ -357,7 +365,8 @@ proc addFloatFlag* (com: var CommandVariant,
                                 datatype: itFloat,
                                 valFloat: 0.0,
                                 actionFloat: faCallback,
-                                callbackFloat: callback)
+                                callbackFloat: callback,
+                                hasNoInputAction: nikRequiresInput)
     if shared:
         com.sharedFlagsLong[longName] = flag
     else:
@@ -376,7 +385,8 @@ proc addFloatFlag* (com: var CommandVariant,
                                 datatype: itFloat,
                                 valFloat: 0.0,
                                 actionFloat: faRef,
-                                refFloat: reference)
+                                refFloat: reference,
+                                hasNoInputAction: nikRequiresInput)
     if shared:
         com.sharedFlagsShort[shortName] = flag
         com.sharedFlagsLong[longName] = flag
@@ -395,7 +405,8 @@ proc addFloatFlag* (com: var CommandVariant,
                                 datatype: itFloat,
                                 valFloat: 0.0,
                                 actionFloat: faRef,
-                                refFloat: reference)
+                                refFloat: reference,
+                                hasNoInputAction: nikRequiresInput)
     if shared:
         com.sharedFlagsShort[shortName] = flag
     else:
@@ -412,7 +423,8 @@ proc addFloatFlag* (com: var CommandVariant,
                                 datatype: itFloat,
                                 valFloat: 0.0,
                                 actionFloat: faRef,
-                                refFloat: reference)
+                                refFloat: reference,
+                                hasNoInputAction: nikRequiresInput)
     if shared:
         com.sharedFlagsLong[longName] = flag
     else:
@@ -432,7 +444,8 @@ proc addStringFlag* (com: var CommandVariant,
                                 datatype: itString,
                                 valString: "",
                                 actionString: faCallback,
-                                callbackString: callback)
+                                callbackString: callback,
+                                hasNoInputAction: nikRequiresInput)
     if shared:
         com.sharedFlagsShort[shortName] = flag
         com.sharedFlagsLong[longName] = flag
@@ -451,7 +464,8 @@ proc addStringFlag* (com: var CommandVariant,
                                 datatype: itString,
                                 valString: "",
                                 actionString: faCallback,
-                                callbackString: callback)
+                                callbackString: callback,
+                                hasNoInputAction: nikRequiresInput)
     if shared:
         com.sharedFlagsShort[shortName] = flag
     else:
@@ -468,7 +482,8 @@ proc addStringFlag* (com: var CommandVariant,
                                 datatype: itString,
                                 valString: "",
                                 actionString: faCallback,
-                                callbackString: callback)
+                                callbackString: callback,
+                                hasNoInputAction: nikRequiresInput)
     if shared:
         com.sharedFlagsLong[longName] = flag
     else:
@@ -487,7 +502,8 @@ proc addStringFlag* (com: var CommandVariant,
                                 datatype: itString,
                                 valString: "",
                                 actionString: faRef,
-                                refString: reference)
+                                refString: reference,
+                                hasNoInputAction: nikRequiresInput)
     if shared:
         com.sharedFlagsShort[shortName] = flag
         com.sharedFlagsLong[longName] = flag
@@ -506,7 +522,8 @@ proc addStringFlag* (com: var CommandVariant,
                                 datatype: itString,
                                 valString: "",
                                 actionString: faRef,
-                                refString: reference)
+                                refString: reference,
+                                hasNoInputAction: nikRequiresInput)
     if shared:
         com.sharedFlagsShort[shortName] = flag
     else:
@@ -523,7 +540,8 @@ proc addStringFlag* (com: var CommandVariant,
                                 datatype: itString,
                                 valString: "",
                                 actionString: faRef,
-                                refString: reference)
+                                refString: reference,
+                                hasNoInputAction: nikRequiresInput)
     if shared:
         com.sharedFlagsLong[longName] = flag
     else:
@@ -543,7 +561,8 @@ proc addBoolFlag* (com: var CommandVariant,
                                 datatype: itBool,
                                 valBool: false,
                                 actionBool: faCallback,
-                                callbackBool: callback)
+                                callbackBool: callback,
+                                hasNoInputAction: nikRequiresInput)
     if shared:
         com.sharedFlagsShort[shortName] = flag
         com.sharedFlagsLong[longName] = flag
@@ -562,7 +581,8 @@ proc addBoolFlag* (com: var CommandVariant,
                                 datatype: itBool,
                                 valBool: false,
                                 actionBool: faCallback,
-                                callbackBool: callback)
+                                callbackBool: callback,
+                                hasNoInputAction: nikRequiresInput)
     if shared:
         com.sharedFlagsShort[shortName] = flag
     else:
@@ -579,7 +599,8 @@ proc addBoolFlag* (com: var CommandVariant,
                                 datatype: itBool,
                                 valBool: false,
                                 actionBool: faCallback,
-                                callbackBool: callback)
+                                callbackBool: callback,
+                                hasNoInputAction: nikRequiresInput)
     if shared:
         com.sharedFlagsLong[longName] = flag
     else:
@@ -598,7 +619,8 @@ proc addBoolFlag* (com: var CommandVariant,
                                 datatype: itBool,
                                 valBool: false,
                                 actionBool: faRef,
-                                refBool: reference)
+                                refBool: reference,
+                                hasNoInputAction: nikRequiresInput)
     if shared:
         com.sharedFlagsShort[shortName] = flag
         com.sharedFlagsLong[longName] = flag
@@ -617,7 +639,8 @@ proc addBoolFlag* (com: var CommandVariant,
                                 datatype: itBool,
                                 valBool: false,
                                 actionBool: faRef,
-                                refBool: reference)
+                                refBool: reference,
+                                hasNoInputAction: nikRequiresInput)
     if shared:
         com.sharedFlagsShort[shortName] = flag
     else:
@@ -634,7 +657,8 @@ proc addBoolFlag* (com: var CommandVariant,
                                 datatype: itBool,
                                 valBool: false,
                                 actionBool: faRef,
-                                refBool: reference)
+                                refBool: reference,
+                                hasNoInputAction: nikRequiresInput)
     if shared:
         com.sharedFlagsLong[longName] = flag
     else:
@@ -654,7 +678,8 @@ proc addFuzzyBoolFlag* (com: var CommandVariant,
                                 datatype: itFuzzyBool,
                                 valFuzzyBool: fbUncertain,
                                 actionFuzzyBool: faCallback,
-                                callbackFuzzyBool: callback)
+                                callbackFuzzyBool: callback,
+                                hasNoInputAction: nikRequiresInput)
     if shared:
         com.sharedFlagsShort[shortName] = flag
         com.sharedFlagsLong[longName] = flag
@@ -673,7 +698,8 @@ proc addFuzzyBoolFlag* (com: var CommandVariant,
                                 datatype: itFuzzyBool,
                                 valFuzzyBool: fbUncertain,
                                 actionFuzzyBool: faCallback,
-                                callbackFuzzyBool: callback)
+                                callbackFuzzyBool: callback,
+                                hasNoInputAction: nikRequiresInput)
     if shared:
         com.sharedFlagsShort[shortName] = flag
     else:
@@ -690,7 +716,8 @@ proc addFuzzyBoolFlag* (com: var CommandVariant,
                                 datatype: itFuzzyBool,
                                 valFuzzyBool: fbUncertain,
                                 actionFuzzyBool: faCallback,
-                                callbackFuzzyBool: callback)
+                                callbackFuzzyBool: callback,
+                                hasNoInputAction: nikRequiresInput)
     if shared:
         com.sharedFlagsLong[longName] = flag
     else:
@@ -709,7 +736,8 @@ proc addFuzzyBoolFlag* (com: var CommandVariant,
                                 datatype: itFuzzyBool,
                                 valFuzzyBool: fbUncertain,
                                 actionFuzzyBool: faRef,
-                                refFuzzyBool: reference)
+                                refFuzzyBool: reference,
+                                hasNoInputAction: nikRequiresInput)
     if shared:
         com.sharedFlagsShort[shortName] = flag
         com.sharedFlagsLong[longName] = flag
@@ -728,7 +756,8 @@ proc addFuzzyBoolFlag* (com: var CommandVariant,
                                 datatype: itFuzzyBool,
                                 valFuzzyBool: fbUncertain,
                                 actionFuzzyBool: faRef,
-                                refFuzzyBool: reference)
+                                refFuzzyBool: reference,
+                                hasNoInputAction: nikRequiresInput)
     if shared:
         com.sharedFlagsShort[shortName] = flag
     else:
@@ -745,7 +774,8 @@ proc addFuzzyBoolFlag* (com: var CommandVariant,
                                 datatype: itFuzzyBool,
                                 valFuzzyBool: fbUncertain,
                                 actionFuzzyBool: faRef,
-                                refFuzzyBool: reference)
+                                refFuzzyBool: reference,
+                                hasNoInputAction: nikRequiresInput)
     if shared:
         com.sharedFlagsLong[longName] = flag
     else:
