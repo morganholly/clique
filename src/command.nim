@@ -199,18 +199,18 @@ proc recAddSharedLongFlag* (com: var CommandVariant, name: string, flag: FlagVar
 
 
 type
-    FlagCallbacks* = proc (val: int64): void or
-                    proc (val: float64): void or
-                    proc (val: string): void or
-                    proc (val: bool): void or
-                    proc (val: FuzzyBool): void
+    FlagCallbacks* = (proc (val: int64): void) or
+                    (proc (val: float64): void) or
+                    (proc (val: string): void) or
+                    (proc (val: bool): void) or
+                    (proc (val: FuzzyBool): void)
     FlagRefs* = ref int64 or
                 ref float64 or
                 ref string or
                 ref bool or
                 ref FuzzyBool
 
-proc addFlag(com: var CommandVariant,
+proc addFlag* (com: var CommandVariant,
             shortName: char = '\0',
             longName: string = "",
             callback: FlagCallbacks,
@@ -284,7 +284,7 @@ proc addFlag(com: var CommandVariant,
             raise newException(ValueError, "Creation of a flag requires at least one name")
     result = com
 
-proc addFlag(com: var CommandVariant,
+proc addFlag* (com: var CommandVariant,
             shortName: char = '\0',
             longName: string = "",
             reference: FlagRefs,
@@ -359,7 +359,7 @@ proc addFlag(com: var CommandVariant,
     result = com
 
 
-proc addFlag(com: var CommandVariant,
+proc addFlag* (com: var CommandVariant,
             shortName: char = '\0',
             longName: string = "",
             callback: FlagCallbacks,
@@ -451,7 +451,7 @@ proc addFlag(com: var CommandVariant,
             raise newException(ValueError, "Creation of a flag requires at least one name")
     result = com
 
-proc addFlag(com: var CommandVariant,
+proc addFlag* (com: var CommandVariant,
             shortName: char = '\0',
             longName: string = "",
             reference: FlagRefs,
