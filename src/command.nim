@@ -199,8 +199,16 @@ proc recAddSharedLongFlag* (com: var CommandVariant, name: string, flag: FlagVar
 
 
 type
-    FlagCallbacks* = proc (val: int64): void or proc (val: float64): void or proc (val: string): void or proc (val: bool): void or proc (val: FuzzyBool): void
-    FlagRefs* = ref int64 or ref float64 or ref string or ref bool or ref FuzzyBool
+    FlagCallbacks* = proc (val: int64): void or
+                    proc (val: float64): void or
+                    proc (val: string): void or
+                    proc (val: bool): void or
+                    proc (val: FuzzyBool): void
+    FlagRefs* = ref int64 or
+                ref float64 or
+                ref string or
+                ref bool or
+                ref FuzzyBool
 
 proc addFlag(com: var CommandVariant,
             shortName: char = '\0',
