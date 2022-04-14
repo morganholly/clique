@@ -179,7 +179,7 @@ proc addAlias* (com: var CommandVariant,
             elif len(i.replace("`", "").replace("\\", "")) > 0:
                 movementsGenerated = movementsGenerated & @[AliasMoveStateVariant(kind: amMoveDown, commandName: i.replace("`", "").replace("\\", ""))]
             else:
-                raise newException(ValueError, "Parsing alias string requires all segments to be at least one character in length, not" & i)
+                raise newException(ValueError, "Parsing alias string requires all segments to be at least one character in length, not " & i)
     com.subcommands[name] = CommandVariant(kind: ckALias,
                                             aliasKind: akMoveOnly,
                                             states: movementsGenerated,
