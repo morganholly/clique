@@ -1,4 +1,4 @@
-import std/tables, std/os, std/strutils
+import std/tables, std/os, std/strutils, std/macros, std/enumerate
 import flag, datatypes, alias
 
 
@@ -221,27 +221,39 @@ type
                             longName: string,
                             shared: bool,
                             refNoInput: ref bool]
-    FlagDeclCallback* = tuple[shortName: char, longName: string, shared: bool, callback: proc (val: int64): void] or
-                        tuple[shortName: char, longName: string, shared: bool, callback: proc (val: float64): void] or
-                        tuple[shortName: char, longName: string, shared: bool, callback: proc (val: string): void] or
-                        tuple[shortName: char, longName: string, shared: bool, callback: proc (val: bool): void] or
-                        tuple[shortName: char, longName: string, shared: bool, callback: proc (val: FuzzyBool): void]
-    FlagDeclRef* = tuple[shortName: char, longName: string, shared: bool, refVal: ref int64] or
-                    tuple[shortName: char, longName: string, shared: bool, refVal: ref float64] or
-                    tuple[shortName: char, longName: string, shared: bool, refVal: ref string] or
-                    tuple[shortName: char, longName: string, shared: bool, refVal: ref bool] or
-                    tuple[shortName: char, longName: string, shared: bool, refVal: ref FuzzyBool]
-    FlagDeclCallbackNoInput* = tuple[shortName: char, longName: string, shared: bool, callback: proc (val: int64): void, callbackNoInput: proc (val: bool): void] or
-                                tuple[shortName: char, longName: string, shared: bool, callback: proc (val: float64): void, callbackNoInput: proc (val: bool): void] or
-                                tuple[shortName: char, longName: string, shared: bool, callback: proc (val: string): void, callbackNoInput: proc (val: bool): void] or
-                                tuple[shortName: char, longName: string, shared: bool, callback: proc (val: bool): void, callbackNoInput: proc (val: bool): void] or
-                                tuple[shortName: char, longName: string, shared: bool, callback: proc (val: FuzzyBool): void, callbackNoInput: proc (val: bool): void]
-    FlagDeclRefNoInput* = tuple[shortName: char, longName: string, shared: bool, refVal: ref int64, refNoInput: ref bool] or
-                            tuple[shortName: char, longName: string, shared: bool, refVal: ref float64, refNoInput: ref bool] or
-                            tuple[shortName: char, longName: string, shared: bool, refVal: ref string, refNoInput: ref bool] or
-                            tuple[shortName: char, longName: string, shared: bool, refVal: ref bool, refNoInput: ref bool] or
-                            tuple[shortName: char, longName: string, shared: bool, refVal: ref FuzzyBool, refNoInput: ref bool]
-    FlagDeclTuples* = FlagDeclCallback or FlagDeclRef or FlagDeclCallbackNoInput or FlagDeclRefNoInput
+    # FlagDeclCallbackLong* = tuple[longName: string, shared: bool, callback: proc (val: int64): void] or
+    #                     tuple[longName: string, shared: bool, callback: proc (val: float64): void] or
+    #                     tuple[longName: string, shared: bool, callback: proc (val: string): void] or
+    #                     tuple[longName: string, shared: bool, callback: proc (val: bool): void] or
+    #                     tuple[longName: string, shared: bool, callback: proc (val: FuzzyBool): void]
+    # FlagDeclCallbackBoth* = tuple[shortName: char, longName: string, shared: bool, callback: proc (val: int64): void] or
+    #                     tuple[shortName: char, longName: string, shared: bool, callback: proc (val: float64): void] or
+    #                     tuple[shortName: char, longName: string, shared: bool, callback: proc (val: string): void] or
+    #                     tuple[shortName: char, longName: string, shared: bool, callback: proc (val: bool): void] or
+    #                     tuple[shortName: char, longName: string, shared: bool, callback: proc (val: FuzzyBool): void]
+    # FlagDeclCallback* = FlagDeclCallbackLong or FlagDeclCallbackBoth
+    # FlagDeclRefLong* = tuple[longName: string, shared: bool, refVal: ref int64] or
+    #                 tuple[longName: string, shared: bool, refVal: ref float64] or
+    #                 tuple[longName: string, shared: bool, refVal: ref string] or
+    #                 tuple[longName: string, shared: bool, refVal: ref bool] or
+    #                 tuple[longName: string, shared: bool, refVal: ref FuzzyBool]
+    # FlagDeclRefBoth* = tuple[shortName: char, longName: string, shared: bool, refVal: ref int64] or
+    #                 tuple[shortName: char, longName: string, shared: bool, refVal: ref float64] or
+    #                 tuple[shortName: char, longName: string, shared: bool, refVal: ref string] or
+    #                 tuple[shortName: char, longName: string, shared: bool, refVal: ref bool] or
+    #                 tuple[shortName: char, longName: string, shared: bool, refVal: ref FuzzyBool]
+    # FlagDeclRef* = FlagDeclRefLong or FlagDeclRefBoth
+    # FlagDeclCallbackNoInput* = tuple[shortName: char, longName: string, shared: bool, callback: proc (val: int64): void, callbackNoInput: proc (val: bool): void] or
+    #                             tuple[shortName: char, longName: string, shared: bool, callback: proc (val: float64): void, callbackNoInput: proc (val: bool): void] or
+    #                             tuple[shortName: char, longName: string, shared: bool, callback: proc (val: string): void, callbackNoInput: proc (val: bool): void] or
+    #                             tuple[shortName: char, longName: string, shared: bool, callback: proc (val: bool): void, callbackNoInput: proc (val: bool): void] or
+    #                             tuple[shortName: char, longName: string, shared: bool, callback: proc (val: FuzzyBool): void, callbackNoInput: proc (val: bool): void]
+    # FlagDeclRefNoInput* = tuple[shortName: char, longName: string, shared: bool, refVal: ref int64, refNoInput: ref bool] or
+    #                         tuple[shortName: char, longName: string, shared: bool, refVal: ref float64, refNoInput: ref bool] or
+    #                         tuple[shortName: char, longName: string, shared: bool, refVal: ref string, refNoInput: ref bool] or
+    #                         tuple[shortName: char, longName: string, shared: bool, refVal: ref bool, refNoInput: ref bool] or
+    #                         tuple[shortName: char, longName: string, shared: bool, refVal: ref FuzzyBool, refNoInput: ref bool]
+    # FlagDeclTuples* = FlagDeclCallback or FlagDeclRef or FlagDeclCallbackNoInput or FlagDeclRefNoInput
 
 
 proc addFlag* (com: var CommandVariant,
