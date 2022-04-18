@@ -210,6 +210,11 @@ type
                 ref bool or
                 ref FuzzyBool
     FlagActions* = FlagCallbacks or FlagRefs
+    FlagTypes* = int64 or
+                float64 or
+                string or
+                bool or
+                FuzzyBool
     FlagDeclTuplesNoAction* = tuple[shortName: char,
                             longName: string,
                             shared: bool] or
@@ -372,57 +377,40 @@ proc typeSplit* (repr: string): seq[string] =
 #                 raise newException(ValueError, "Flag " & $i & " action is of invalid type. flag action is " & getType(f).repr() & " inst: " & getTypeInst(f).repr() & " impl: " & getTypeImpl(f).repr())
 #         else:
 #             raise newException(ValueError, "Flag " & $i & " in sequence must be a tuple. flag is " & getType(f).repr() & " inst: " & getTypeInst(f).repr() & " impl: " & getTypeImpl(f).repr())
+
+
+proc addFlag*[T: FlagTypes] (com: var CommandVariant,
             shortName: char = '\0',
             longName: string = "",
-            callback: FlagCallbacks,
+            callback: proc (val: T): void,
+            callbackNoInput: proc (val: bool): void = nil,
             shared: bool = false
             ): var CommandVariant =
     var flag: FlagVariantRef
-    when callback is proc (val: int64): void:
+    if callbackNoInput isnot nil:
         flag = FlagVariantRef(kind: fkShortAndLong,
-                            shortName: shortName,
-                            longName: longName,
-                            datatype: itInt,
-                            valInt: 0,
-                            actionInt: faCallback,
-                            callbackInt: callback,
-                            hasNoInputAction: nikRequiresInput)
-    elif callback is proc (val: float64): void:
+                                shortName: shortName,
+                                longName: longName,
+                                datatype: when T is int64: itInt elif T is float64: itFloat elif T is string: itString elif T is bool: itBool elif T is FuzzyBool: itFuzzyBool,
+                                when T is int64: valInt: 0 elif T is float64: valFloat: 0.0 elif T is string: valString: "" elif T is bool: valBool: false elif T is FuzzyBool: valFuzzyBool: fbUncertain,
+                                when T is int64: actionInt elif T is float64: actionFloat elif T is string: actionString elif T is bool: actionBool elif T is FuzzyBool: actionFuzzyBool: faCallback,
+                                when T is int64: callbackInt elif T is float64: callbackFloat elif T is string: callbackString elif T is bool: callbackBool elif T is FuzzyBool: callbackFuzzyBool: callback,
+                                hasNoInputAction: nikRequiresInput)
+    else:
         flag = FlagVariantRef(kind: fkShortAndLong,
-                            shortName: shortName,
-                            longName: longName,
-                            datatype: itFloat,
-                            valFloat: 0.0,
-                            actionFloat: faCallback,
-                            callbackFloat: callback,
-                            hasNoInputAction: nikRequiresInput)
-    elif callback is proc (val: string): void:
-        flag = FlagVariantRef(kind: fkShortAndLong,
-                            shortName: shortName,
-                            longName: longName,
-                            datatype: itString,
-                            valString: "",
-                            actionString: faCallback,
-                            callbackString: callback,
-                            hasNoInputAction: nikRequiresInput)
-    elif callback is proc (val: bool): void:
-        flag = FlagVariantRef(kind: fkShortAndLong,
-                            shortName: shortName,
-                            longName: longName,
-                            datatype: itBool,
-                            valBool: false,
-                            actionBool: faCallback,
-                            callbackBool: callback,
-                            hasNoInputAction: nikRequiresInput)
-    elif callback is proc (val: FuzzyBool): void:
-        flag = FlagVariantRef(kind: fkShortAndLong,
-                            shortName: shortName,
-                            longName: longName,
-                            datatype: itFuzzyBool,
-                            valFuzzyBool: fbUncertain,
-                            actionFuzzyBool: faCallback,
-                            callbackFuzzyBool: callback,
-                            hasNoInputAction: nikRequiresInput)
+                                shortName: shortName,
+                                longName: longName,
+                                datatype: when T is int64: itInt elif T is float64: itFloat elif T is string: itString elif T is bool: itBool elif T is FuzzyBool: itFuzzyBool,
+                                when T is int64: valInt: 0 elif T is float64: valFloat: 0.0 elif T is string: valString: "" elif T is bool: valBool: false elif T is FuzzyBool: valFuzzyBool: fbUncertain,
+                                when T is int64: actionInt elif T is float64: actionFloat elif T is string: actionString elif T is bool: actionBool elif T is FuzzyBool: actionFuzzyBool: faCallback,
+                                when T is int64: callbackInt elif T is float64: callbackFloat elif T is string: callbackString elif T is bool: callbackBool elif T is FuzzyBool: callbackFuzzyBool: callback,
+                                hasNoInputAction: nikHasNoInputAction,
+                                noInputType: when T is int64: itInt elif T is float64: itFloat elif T is string: itString elif T is bool: itBool elif T is FuzzyBool: itFuzzyBool,
+                                when T isnot bool:
+                                    noInputBool: false,
+                                    noInputAction: faCallback,
+                                    callbackNoInput: callbackNoInput
+                                )
     when shared:
         when (shortName != '\0') and (longName != ""):
             com.sharedFlagsShort[shortName] = flag
@@ -445,243 +433,39 @@ proc typeSplit* (repr: string): seq[string] =
             raise newException(ValueError, "Creation of a flag requires at least one name")
     result = com
 
-proc addFlag* (com: var CommandVariant,
+
+proc addFlag*[T: FlagTypes] (com: var CommandVariant,
             shortName: char = '\0',
             longName: string = "",
-            reference: FlagRefs,
+            reference: ref T,
+            refNoInput: ref bool = nil,
             shared: bool = false
             ): var CommandVariant =
     var flag: FlagVariantRef
-    when reference is proc (val: int64): void:
+    if refNoInput isnot nil:
         flag = FlagVariantRef(kind: fkShortAndLong,
-                            shortName: shortName,
-                            longName: longName,
-                            datatype: itInt,
-                            valInt: 0,
-                            actionInt: faRef,
-                            refInt: reference,
-                            hasNoInputAction: nikRequiresInput)
-    elif reference is proc (val: float64): void:
-        flag = FlagVariantRef(kind: fkShortAndLong,
-                            shortName: shortName,
-                            longName: longName,
-                            datatype: itFloat,
-                            valFloat: 0.0,
-                            actionFloat: faRef,
-                            refFloat: reference,
-                            hasNoInputAction: nikRequiresInput)
-    elif reference is proc (val: string): void:
-        flag = FlagVariantRef(kind: fkShortAndLong,
-                            shortName: shortName,
-                            longName: longName,
-                            datatype: itString,
-                            valString: "",
-                            actionString: faRef,
-                            refString: reference,
-                            hasNoInputAction: nikRequiresInput)
-    elif reference is proc (val: bool): void:
-        flag = FlagVariantRef(kind: fkShortAndLong,
-                            shortName: shortName,
-                            longName: longName,
-                            datatype: itBool,
-                            valBool: false,
-                            actionBool: faRef,
-                            refBool: reference,
-                            hasNoInputAction: nikRequiresInput)
-    elif reference is proc (val: FuzzyBool): void:
-        flag = FlagVariantRef(kind: fkShortAndLong,
-                            shortName: shortName,
-                            longName: longName,
-                            datatype: itFuzzyBool,
-                            valFuzzyBool: fbUncertain,
-                            actionFuzzyBool: faRef,
-                            refFuzzyBool: reference,
-                            hasNoInputAction: nikRequiresInput)
-    when shared:
-        when (shortName != '\0') and (longName != ""):
-            com.sharedFlagsShort[shortName] = flag
-            com.sharedFlagsLong[longName] = flag
-        elif shortName != '\0':
-            com.sharedFlagsShort[shortName] = flagsLong
-        elif longName != "":
-            com.sharedFlagsLong[longName] = flag
-        else:
-            raise newException(ValueError, "Creation of a flag requires at least one name")
+                                shortName: shortName,
+                                longName: longName,
+                                datatype: when T is int64: itInt elif T is float64: itFloat elif T is string: itString elif T is bool: itBool elif T is FuzzyBool: itFuzzyBool,
+                                when T is int64: valInt: 0 elif T is float64: valFloat: 0.0 elif T is string: valString: "" elif T is bool: valBool: false elif T is FuzzyBool: valFuzzyBool: fbUncertain,
+                                when T is int64: actionInt elif T is float64: actionFloat elif T is string: actionString elif T is bool: actionBool elif T is FuzzyBool: actionFuzzyBool: faRef,
+                                when T is int64: refInt elif T is float64: refFloat elif T is string: refString elif T is bool: refBool elif T is FuzzyBool: refFuzzyBool: ref,
+                                hasNoInputAction: nikRequiresInput)
     else:
-        when (shortName != '\0') and (longName != ""):
-            com.flagsShort[shortName] = flag
-            com.flagsLong[longName] = flag
-        elif shortName != '\0':
-            com.flagsShort[shortName] = flagsLong
-        elif longName != "":
-            com.flagsLong[longName] = flag
-        else:
-            raise newException(ValueError, "Creation of a flag requires at least one name")
-    result = com
-
-
-proc addFlag* (com: var CommandVariant,
-            shortName: char = '\0',
-            longName: string = "",
-            callback: FlagCallbacks,
-            shared: bool = false,
-            callbackNoInput: proc (val: bool): void
-            ): var CommandVariant =
-    var flag: FlagVariantRef
-    when callback is proc (val: int64): void:
         flag = FlagVariantRef(kind: fkShortAndLong,
-                            shortName: shortName,
-                            longName: longName,
-                            datatype: itInt,
-                            valInt: 0,
-                            actionInt: faCallback,
-                            callbackInt: callback,
-                            hasNoInputAction: nikHasNoInputAction,
-                            noInputType: itInt,
-                            noInputBool: false,
-                            noInputAction: faCallback,
-                            callbackNoInput: callbackNoInput)
-    elif callback is proc (val: float64): void:
-        flag = FlagVariantRef(kind: fkShortAndLong,
-                            shortName: shortName,
-                            longName: longName,
-                            datatype: itFloat,
-                            valFloat: 0.0,
-                            actionFloat: faCallback,
-                            callbackFloat: callback,
-                            hasNoInputAction: nikHasNoInputAction,
-                            noInputType: itFloat,
-                            noInputBool: false,
-                            noInputAction: faCallback,
-                            callbackNoInput: callbackNoInput)
-    elif callback is proc (val: string): void:
-        flag = FlagVariantRef(kind: fkShortAndLong,
-                            shortName: shortName,
-                            longName: longName,
-                            datatype: itString,
-                            valString: "",
-                            actionString: faCallback,
-                            callbackString: callback,
-                            hasNoInputAction: nikHasNoInputAction,
-                            noInputType: itString,
-                            noInputBool: false,
-                            noInputAction: faCallback,
-                            callbackNoInput: callbackNoInput)
-    elif callback is proc (val: bool): void:
-        flag = FlagVariantRef(kind: fkShortAndLong,
-                            shortName: shortName,
-                            longName: longName,
-                            datatype: itBool,
-                            valBool: false,
-                            actionBool: faCallback,
-                            callbackBool: callback,
-                            hasNoInputAction: nikHasNoInputAction,
-                            noInputType: itBool)
-    elif callback is proc (val: FuzzyBool): void:
-        flag = FlagVariantRef(kind: fkShortAndLong,
-                            shortName: shortName,
-                            longName: longName,
-                            datatype: itFuzzyBool,
-                            valFuzzyBool: fbUncertain,
-                            actionFuzzyBool: faCallback,
-                            callbackFuzzyBool: callback,
-                            hasNoInputAction: nikHasNoInputAction,
-                            noInputType: itFuzzyBool,
-                            noInputBool: false,
-                            noInputAction: faCallback,
-                            callbackNoInput: callbackNoInput)
-    when shared:
-        when (shortName != '\0') and (longName != ""):
-            com.sharedFlagsShort[shortName] = flag
-            com.sharedFlagsLong[longName] = flag
-        elif shortName != '\0':
-            com.sharedFlagsShort[shortName] = flagsLong
-        elif longName != "":
-            com.sharedFlagsLong[longName] = flag
-        else:
-            raise newException(ValueError, "Creation of a flag requires at least one name")
-    else:
-        when (shortName != '\0') and (longName != ""):
-            com.flagsShort[shortName] = flag
-            com.flagsLong[longName] = flag
-        elif shortName != '\0':
-            com.flagsShort[shortName] = flagsLong
-        elif longName != "":
-            com.flagsLong[longName] = flag
-        else:
-            raise newException(ValueError, "Creation of a flag requires at least one name")
-    result = com
-
-proc addFlag* (com: var CommandVariant,
-            shortName: char = '\0',
-            longName: string = "",
-            reference: FlagRefs,
-            shared: bool = false,
-            refNoInput: ref bool
-            ): var CommandVariant =
-    var flag: FlagVariantRef
-    when reference is proc (val: int64): void:
-        flag = FlagVariantRef(kind: fkShortAndLong,
-                            shortName: shortName,
-                            longName: longName,
-                            datatype: itInt,
-                            valInt: 0,
-                            actionInt: faRef,
-                            refInt: reference,
-                            hasNoInputAction: nikHasNoInputAction,
-                            noInputType: itInt,
-                            noInputBool: true,
-                            noInputAction: faRef,
-                            refNoInput: refNoInput)
-    elif reference is proc (val: float64): void:
-        flag = FlagVariantRef(kind: fkShortAndLong,
-                            shortName: shortName,
-                            longName: longName,
-                            datatype: itFloat,
-                            valFloat: 0.0,
-                            actionFloat: faRef,
-                            refFloat: reference,
-                            hasNoInputAction: nikHasNoInputAction,
-                            noInputType: itFloat,
-                            noInputBool: true,
-                            noInputAction: faRef,
-                            refNoInput: refNoInput)
-    elif reference is proc (val: string): void:
-        flag = FlagVariantRef(kind: fkShortAndLong,
-                            shortName: shortName,
-                            longName: longName,
-                            datatype: itString,
-                            valString: "",
-                            actionString: faRef,
-                            refString: reference,
-                            hasNoInputAction: nikHasNoInputAction,
-                            noInputType: itString,
-                            noInputBool: true,
-                            noInputAction: faRef,
-                            refNoInput: refNoInput)
-    elif reference is proc (val: bool): void:
-        flag = FlagVariantRef(kind: fkShortAndLong,
-                            shortName: shortName,
-                            longName: longName,
-                            datatype: itBool,
-                            valBool: false,
-                            actionBool: faRef,
-                            refBool: reference,
-                            hasNoInputAction: nikHasNoInputAction,
-                            noInputType: itBool)
-    elif reference is proc (val: FuzzyBool): void:
-        flag = FlagVariantRef(kind: fkShortAndLong,
-                            shortName: shortName,
-                            longName: longName,
-                            datatype: itFuzzyBool,
-                            valFuzzyBool: fbUncertain,
-                            actionFuzzyBool: faRef,
-                            refFuzzyBool: reference,
-                            hasNoInputAction: nikHasNoInputAction,
-                            noInputType: itFuzzyBool,
-                            noInputBool: true,
-                            noInputAction: faRef,
-                            refNoInput: refNoInput)
+                                shortName: shortName,
+                                longName: longName,
+                                datatype: when T is int64: itInt elif T is float64: itFloat elif T is string: itString elif T is bool: itBool elif T is FuzzyBool: itFuzzyBool,
+                                when T is int64: valInt: 0 elif T is float64: valFloat: 0.0 elif T is string: valString: "" elif T is bool: valBool: false elif T is FuzzyBool: valFuzzyBool: fbUncertain,
+                                when T is int64: actionInt elif T is float64: actionFloat elif T is string: actionString elif T is bool: actionBool elif T is FuzzyBool: actionFuzzyBool: faRef,
+                                when T is int64: refInt elif T is float64: refFloat elif T is string: refString elif T is bool: refBool elif T is FuzzyBool: refFuzzyBool: ref,
+                                hasNoInputAction: nikHasNoInputAction,
+                                noInputType: when T is int64: itInt elif T is float64: itFloat elif T is string: itString elif T is bool: itBool elif T is FuzzyBool: itFuzzyBool,
+                                when T isnot bool:
+                                    noInputBool: false,
+                                    noInputAction: faRef,
+                                    refNoInput: refNoInput
+                                )
     when shared:
         when (shortName != '\0') and (longName != ""):
             com.sharedFlagsShort[shortName] = flag
