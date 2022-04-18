@@ -411,8 +411,8 @@ proc addFlag*[T: FlagTypes] (com: var CommandVariant,
                                     noInputAction: faCallback,
                                     callbackNoInput: callbackNoInput
                                 )
-    when shared:
-        when (shortName != '\0') and (longName != ""):
+    if shared:
+        if (shortName != '\0') and (longName != ""):
             com.sharedFlagsShort[shortName] = flag
             com.sharedFlagsLong[longName] = flag
         elif shortName != '\0':
@@ -422,7 +422,7 @@ proc addFlag*[T: FlagTypes] (com: var CommandVariant,
         else:
             raise newException(ValueError, "Creation of a flag requires at least one name")
     else:
-        when (shortName != '\0') and (longName != ""):
+        if (shortName != '\0') and (longName != ""):
             com.flagsShort[shortName] = flag
             com.flagsLong[longName] = flag
         elif shortName != '\0':
@@ -466,8 +466,8 @@ proc addFlag*[T: FlagTypes] (com: var CommandVariant,
                                     noInputAction: faRef,
                                     refNoInput: refNoInput
                                 )
-    when shared:
-        when (shortName != '\0') and (longName != ""):
+    if shared:
+        if (shortName != '\0') and (longName != ""):
             com.sharedFlagsShort[shortName] = flag
             com.sharedFlagsLong[longName] = flag
         elif shortName != '\0':
@@ -477,7 +477,7 @@ proc addFlag*[T: FlagTypes] (com: var CommandVariant,
         else:
             raise newException(ValueError, "Creation of a flag requires at least one name")
     else:
-        when (shortName != '\0') and (longName != ""):
+        if (shortName != '\0') and (longName != ""):
             com.flagsShort[shortName] = flag
             com.flagsLong[longName] = flag
         elif shortName != '\0':
