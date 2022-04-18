@@ -282,110 +282,96 @@ proc typeSplit* (repr: string): seq[string] =
             else:
                 result[select] = result[select] & $c
 
-macro addFlags* (com: var CommandVariant, flags: varargs[typed]): untyped =
-    # result = nnkStmtList.newTree()
-    echo(flags.treeRepr())
-    for i, f in enumerate(flags):
-        echo(f.repr())
-        # echo(astGenRepr(f))
-        # for i in f[1]:
-        #     echo(i.kind)
-        # echo(owner(f[2]))
-        # echo(symKind(f[2]).repr())
-        # echo(getImpl(f[2]).repr())
-        # echo(owner(f[3]))
-        # echo(symKind(f[3]).repr())
-        # echo(getImpl(f[3]).repr())
-        var fTypeRepr: string = getType(f).repr()
-        echo(fTypeRepr)
-        if fTypeRepr.startswith("tuple"):
-            var fv: seq[string] = typeSplit(fTypeRepr[6..len(fTypeRepr)-2].multiReplace(("\r", ""), ("\n", ""), ("\r\n", ""), ("\f", ""), ("\v", "")))
-            echo(fv)
-            var shortName: char = '\0'
-            var longName: string = ""
-            var offset: int = 0
-            if fv[0] == "char" and fv[1] == "string":
-                echo(f[0].kind)
-                shortName = chr(intVal(f[0]))
-                longName = strVal(f[1])
-                offset = 2
-            elif fv[0] == "string" and fv[1] == "char":
-                longName = strVal(f[0])
-                shortName = chr(intVal(f[1]))
-                offset = 2
-            elif fv[0] == "char":
-                shortName = chr(intVal(f[0]))
-                offset = 1
-            elif fv[0] == "string":
-                longName = strVal(f[0])
-                offset = 1
-            else:
-                raise newException(ValueError, "Flag " & $i & " requires at least one name")
-            echo(shortName, " ", longName)
-            var shared: bool = false
-            if fv[offset] == "bool":
-                shared = boolVal(f[offset])
-            echo(shared)
-            var flag: FlagVariantRef
-            if len(fv) >= 5 and fv[offset+1].startswith("proc[void, ") and fv[offset+2] == "proc[void, bool]":
-                if fv[offset+1] == "proc[void, int64]":
-                    discard
-                elif fv[offset+1] == "proc[void, float64]":
-                    discard
-                elif fv[offset+1] == "proc[void, string]":
-                    discard
-                elif fv[offset+1] == "proc[void, bool]":
-                    discard
-                elif fv[offset+1] == "proc[void, FuzzyBool]":
-                    discard
-                else:
-                    raise newException(ValueError, "Flag " & $i & " action is of invalid type. flag action is " & getType(f).repr() & " inst: " & getTypeInst(f).repr() & " impl: " & getTypeImpl(f).repr())
-            elif len(fv) >= 5 and fv[offset+1].startswith("ref[") and fv[offset+2] == "proc[void, bool]":
-                if fv[offset+1] == "ref[int64]":
-                    discard
-                elif fv[offset+1] == "ref[float64]":
-                    discard
-                elif fv[offset+1] == "ref[string]":
-                    discard
-                elif fv[offset+1] == "ref[bool]":
-                    discard
-                elif fv[offset+1] == "ref[FuzzyBool]":
-                    discard
-                else:
-                    raise newException(ValueError, "Flag " & $i & " action is of invalid type. flag action is " & getType(f).repr() & " inst: " & getTypeInst(f).repr() & " impl: " & getTypeImpl(f).repr())
-            elif fv[offset+1].startswith("proc[void, "):
-                if fv[offset+1] == "proc[void, int64]":
-                    discard
-                elif fv[offset+1] == "proc[void, float64]":
-                    discard
-                elif fv[offset+1] == "proc[void, string]":
-                    discard
-                elif fv[offset+1] == "proc[void, bool]":
-                    discard
-                elif fv[offset+1] == "proc[void, FuzzyBool]":
-                    discard
-                else:
-                    raise newException(ValueError, "Flag " & $i & " action is of invalid type. flag action is " & getType(f).repr() & " inst: " & getTypeInst(f).repr() & " impl: " & getTypeImpl(f).repr())
-            elif fv[offset+1].startswith("ref["):
-                if fv[offset+1] == "ref[int64]":
-                    discard
-                elif fv[offset+1] == "ref[float64]":
-                    discard
-                elif fv[offset+1] == "ref[string]":
-                    discard
-                elif fv[offset+1] == "ref[bool]":
-                    discard
-                elif fv[offset+1] == "ref[FuzzyBool]":
-                    discard
-                else:
-                    raise newException(ValueError, "Flag " & $i & " action is of invalid type. flag action is " & getType(f).repr() & " inst: " & getTypeInst(f).repr() & " impl: " & getTypeImpl(f).repr())
-            else:
-                raise newException(ValueError, "Flag " & $i & " action is of invalid type. flag action is " & getType(f).repr() & " inst: " & getTypeInst(f).repr() & " impl: " & getTypeImpl(f).repr())
-        else:
-            raise newException(ValueError, "Flag " & $i & " in sequence must be a tuple. flag is " & getType(f).repr() & " inst: " & getTypeInst(f).repr() & " impl: " & getTypeImpl(f).repr())
-
-
-proc addFlag* (com: var CommandVariant,
+# macro addFlags* (com: var CommandVariant, flags: varargs[typed]): untyped =
+#     # result = nnkStmtList.newTree()
+#     echo(flags.treeRepr())
+#     for i, f in enumerate(flags):
+#         echo(f.repr())
+#         # echo(astGenRepr(f))
+#         # for i in f[1]:
+#         #     echo(i.kind)
+#         # echo(owner(f[2]))
+#         # echo(symKind(f[2]).repr())
+#         # echo(getImpl(f[2]).repr())
+#         # echo(owner(f[3]))
+#         # echo(symKind(f[3]).repr())
+#         # echo(getImpl(f[3]).repr())
+#         var fTypeRepr: string = getType(f).repr()
+#         echo(fTypeRepr)
+#         if fTypeRepr.startswith("tuple"):
+#             var fv: seq[string] = typeSplit(fTypeRepr[6..len(fTypeRepr)-2].multiReplace(("\r", ""), ("\n", ""), ("\r\n", ""), ("\f", ""), ("\v", "")))
+#             echo(fv)
+#             var shortName: char = '\0'
+#             var longName: string = ""
+#             var nameKind: FlagKind
+#             var offset: int = 0
+#             if fv[0] == "char" and fv[1] == "string":
+#                 echo(f[0].kind)
+#                 shortName = chr(intVal(f[0]))
+#                 longName = strVal(f[1])
+#                 nameKind = fkShortAndLong
+#                 offset = 2
+#             elif fv[0] == "string" and fv[1] == "char":
+#                 longName = strVal(f[0])
+#                 shortName = chr(intVal(f[1]))
+#                 nameKind = fkShortAndLong
+#                 offset = 2
+#             elif fv[0] == "char":
+#                 shortName = chr(intVal(f[0]))
+#                 nameKind = fkShortOnly
+#                 offset = 1
+#             elif fv[0] == "string":
+#                 longName = strVal(f[0])
+#                 nameKind = fkLongOnly
+#                 offset = 1
+#             else:
+#                 raise newException(ValueError, "Flag " & $i & " requires at least one name")
+#             echo(shortName, " ", longName)
+#             var shared: bool = false
+#             if fv[offset] == "bool":
+#                 shared = boolVal(f[offset])
+#             echo(shared)
+#             var datatype: InputType
+#             var actionType: FlagAction
+#             var hasNoInputAction: NoInputKind
+#             if fv[offset+1].startswith("proc[void, "):
+#                 hasNoInputAction = nikRequiresInput
+#                 actionType = faCallback
+#                 if fv[offset+1] == "proc[void, int64]":
+#                     datatype = itInt
+#                 elif fv[offset+1] == "proc[void, float64]":
+#                     datatype = itFloat
+#                 elif fv[offset+1] == "proc[void, string]":
+#                     datatype = itString
+#                 elif fv[offset+1] == "proc[void, bool]":
+#                     datatype = itBool
+#                 elif fv[offset+1] == "proc[void, FuzzyBool]":
+#                     datatype = itFuzzyBool
+#                 else:
+#                     raise newException(ValueError, "Flag " & $i & " action is of invalid type. flag action is " & getType(f).repr() & " inst: " & getTypeInst(f).repr() & " impl: " & getTypeImpl(f).repr())
+#                 if fv[offset+2] == "proc[void, bool]":
+#                     discard
+#             elif fv[offset+1].startswith("ref["):
+#                 hasNoInputAction = nikRequiresInput
+#                 actionType = faRef
+#                 if fv[offset+1] == "ref[int64]":
+#                     datatype = itInt
+#                 elif fv[offset+1] == "ref[float64]":
+#                     datatype = itFloat
+#                 elif fv[offset+1] == "ref[string]":
+#                     datatype = itString
+#                 elif fv[offset+1] == "ref[bool]":
+#                     datatype = itBool
+#                 elif fv[offset+1] == "ref[FuzzyBool]":
+#                     datatype = itFuzzyBool
+#                 else:
+#                     raise newException(ValueError, "Flag " & $i & " action is of invalid type. flag action is " & getType(f).repr() & " inst: " & getTypeInst(f).repr() & " impl: " & getTypeImpl(f).repr())
+#                 if fv[offset+2] == "ref[bool]":
+#                     discard
+#             else:
+#                 raise newException(ValueError, "Flag " & $i & " action is of invalid type. flag action is " & getType(f).repr() & " inst: " & getTypeInst(f).repr() & " impl: " & getTypeImpl(f).repr())
+#         else:
+#             raise newException(ValueError, "Flag " & $i & " in sequence must be a tuple. flag is " & getType(f).repr() & " inst: " & getTypeInst(f).repr() & " impl: " & getTypeImpl(f).repr())
             shortName: char = '\0',
             longName: string = "",
             callback: FlagCallbacks,
