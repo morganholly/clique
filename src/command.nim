@@ -416,7 +416,7 @@ proc addFlag*[T: FlagTypes] (com: var CommandVariant,
             com.sharedFlagsShort[shortName] = flag
             com.sharedFlagsLong[longName] = flag
         elif shortName != '\0':
-            com.sharedFlagsShort[shortName] = flagsLong
+            com.sharedFlagsShort[shortName] = flag
         elif longName != "":
             com.sharedFlagsLong[longName] = flag
         else:
@@ -426,7 +426,7 @@ proc addFlag*[T: FlagTypes] (com: var CommandVariant,
             com.flagsShort[shortName] = flag
             com.flagsLong[longName] = flag
         elif shortName != '\0':
-            com.flagsShort[shortName] = flagsLong
+            com.flagsShort[shortName] = flag
         elif longName != "":
             com.flagsLong[longName] = flag
         else:
@@ -471,7 +471,7 @@ proc addFlag*[T: FlagTypes] (com: var CommandVariant,
             com.sharedFlagsShort[shortName] = flag
             com.sharedFlagsLong[longName] = flag
         elif shortName != '\0':
-            com.sharedFlagsShort[shortName] = flagsLong
+            com.sharedFlagsShort[shortName] = flag
         elif longName != "":
             com.sharedFlagsLong[longName] = flag
         else:
@@ -481,7 +481,7 @@ proc addFlag*[T: FlagTypes] (com: var CommandVariant,
             com.flagsShort[shortName] = flag
             com.flagsLong[longName] = flag
         elif shortName != '\0':
-            com.flagsShort[shortName] = flagsLong
+            com.flagsShort[shortName] = flag
         elif longName != "":
             com.flagsLong[longName] = flag
         else:
