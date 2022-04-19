@@ -387,7 +387,7 @@ proc addFlag*[T: FlagTypes] (com: var CommandVariant,
             shared: bool = false
             ): var CommandVariant =
     var flag: FlagVariantRef
-    if callbackNoInput isnot nil:
+    if callbackNoInput is nil:
         flag = FlagVariantRef(kind: fkShortAndLong,
                                 shortName: shortName,
                                 longName: longName,
@@ -442,7 +442,7 @@ proc addFlag*[T: FlagTypes] (com: var CommandVariant,
             shared: bool = false
             ): var CommandVariant =
     var flag: FlagVariantRef
-    if refNoInput isnot nil:
+    if refNoInput is nil:
         flag = FlagVariantRef(kind: fkShortAndLong,
                                 shortName: shortName,
                                 longName: longName,
