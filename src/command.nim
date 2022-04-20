@@ -334,6 +334,35 @@ proc typeSplit* (repr: string): seq[string] =
 #         else:
 #             raise newException(ValueError, "Flag " & $i & " in sequence must be a tuple. flag is " & getType(f).repr() & " inst: " & getTypeInst(f).repr() & " impl: " & getTypeImpl(f).repr())
 
+proc addFlag*[T: FlagTypes] (com: var CommandVariant,
+            shortName: char,
+            callback: proc (val: T): void,
+            callbackNoInput: proc (val: bool): void,
+            shared: bool = false
+            ): var CommandVariant =
+    return com.addFlag(shortName, "", callback, callbackNoInput, shared)
+
+proc addFlag*[T: FlagTypes] (com: var CommandVariant,
+            longName: string,
+            callback: proc (val: T): void,
+            callbackNoInput: proc (val: bool): void,
+            shared: bool = false
+            ): var CommandVariant =
+    return com.addFlag('\0', longName, callback, callbackNoInput, shared)
+
+proc addFlag*[T: FlagTypes] (com: var CommandVariant,
+            shortName: char,
+            callback: proc (val: T): void,
+            shared: bool = false
+            ): var CommandVariant =
+    return com.addFlag(shortName, "", callback, nil, shared)
+
+proc addFlag*[T: FlagTypes] (com: var CommandVariant,
+            longName: string,
+            callback: proc (val: T): void,
+            shared: bool = false
+            ): var CommandVariant =
+    return com.addFlag('\0', longName, callback, nil, shared)
 
 proc addFlag*[T: FlagTypes] (com: var CommandVariant,
             shortName: char = '\0',
@@ -438,6 +467,36 @@ proc addFlag*[T: FlagTypes] (com: var CommandVariant,
             raise newException(ValueError, "Creation of a flag requires at least one name")
     result = com
 
+
+proc addFlag*[T: FlagTypes] (com: var CommandVariant,
+            shortName: char,
+            reference: ref T,
+            refNoInput: ref bool,
+            shared: bool = false
+            ): var CommandVariant =
+    return com.addFlag(shortName, "", reference, refNoInput, shared)
+
+proc addFlag*[T: FlagTypes] (com: var CommandVariant,
+            longName: string,
+            reference: ref T,
+            refNoInput: ref bool,
+            shared: bool = false
+            ): var CommandVariant =
+    return com.addFlag('\0', longName, reference, refNoInput, shared)
+
+proc addFlag*[T: FlagTypes] (com: var CommandVariant,
+            shortName: char,
+            reference: ref T,
+            shared: bool = false
+            ): var CommandVariant =
+    return com.addFlag(shortName, "", reference, nil, shared)
+
+proc addFlag*[T: FlagTypes] (com: var CommandVariant,
+            longName: string,
+            reference: ref T,
+            shared: bool = false
+            ): var CommandVariant =
+    return com.addFlag('\0', longName, reference, nil, shared)
 
 proc addFlag*[T: FlagTypes] (com: var CommandVariant,
             shortName: char = '\0',
