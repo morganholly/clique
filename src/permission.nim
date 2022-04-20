@@ -7,6 +7,9 @@ type
 
 proc `==`* (left: PermName, right: PermName): bool {.borrow.}
 
+proc `==`* (left: Permission, right: Permission): bool =
+    return left.name == right.name
+
 proc `in`* (left: Permission, right: Permission): bool =
     return left in right.granted
 
