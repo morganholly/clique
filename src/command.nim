@@ -55,7 +55,12 @@ proc parse* (com: var CommandVariant, params: seq[string], root: CommandVariant,
                         com.flagsLong[vnodash].action(params[readOffset + 1])
                         parse(com, params, root, readOffset + 2)
                     else:
-                        raise newException(ValueError, "Missing value for flag")
+                        case com.flagsLong[vnodash].hasNoInputAction:
+                            of nikHasNoInputAction:
+                                com.flagsLong[vnodash].actionNoInput()
+                                parse(com, params, root, readOffset + 1)
+                            of nikRequiresInput:
+                                raise newException(ValueError, "Missing value for flag")
                 else:
                     com.flagsLong[vnodash].action("")
                     parse(com, params, root, readOffset + 1)
@@ -69,7 +74,12 @@ proc parse* (com: var CommandVariant, params: seq[string], root: CommandVariant,
                                 current.sharedFlagsLong[vnodash].action(params[readOffset + 1])
                                 parse(current, params, root, readOffset + 2)
                             else:
-                                raise newException(ValueError, "Missing value for flag")
+                                case com.sharedFlagsLong[vnodash].hasNoInputAction:
+                                    of nikHasNoInputAction:
+                                        com.sharedFlagsLong[vnodash].actionNoInput()
+                                        parse(com, params, root, readOffset + 1)
+                                    of nikRequiresInput:
+                                        raise newException(ValueError, "Missing value for flag")
                         else:
                             current.sharedFlagsLong[vnodash].action("")
                             parse(current, params, root, readOffset + 1)
@@ -91,9 +101,13 @@ proc parse* (com: var CommandVariant, params: seq[string], root: CommandVariant,
                             offsetFromValue = 2
                         else:
                             echo("no input, notbool")
-                            com.sharedFlagsShort[c].actionNoInput()
-                            if offsetFromValue < 2:
-                                offsetFromValue = 1
+                            case com.flagsShort[c].hasNoInputAction:
+                                of nikHasNoInputAction:
+                                    com.flagsShort[c].actionNoInput()
+                                    if offsetFromValue < 2:
+                                        offsetFromValue = 1
+                                of nikRequiresInput:
+                                    raise newException(ValueError, "Missing value for flag")
                     else:
                         echo("no input, bool")
                         com.flagsShort[c].action("")
@@ -111,9 +125,13 @@ proc parse* (com: var CommandVariant, params: seq[string], root: CommandVariant,
                                     com.sharedFlagsShort[c].action(params[readOffset + 1])
                                     offsetFromValue = 2
                                 else:
-                                    com.sharedFlagsShort[c].actionNoInput()
-                                    if offsetFromValue < 2:
-                                        offsetFromValue = 1
+                                    case com.sharedFlagsShort[c].hasNoInputAction:
+                                        of nikHasNoInputAction:
+                                            com.sharedFlagsShort[c].actionNoInput()
+                                            if offsetFromValue < 2:
+                                                offsetFromValue = 1
+                                        of nikRequiresInput:
+                                            raise newException(ValueError, "Missing value for flag")
                             else:
                                 com.sharedFlagsShort[c].action("")
                                 if offsetFromValue < 2:
@@ -130,9 +148,13 @@ proc parse* (com: var CommandVariant, params: seq[string], root: CommandVariant,
                                     com.sharedFlagsShort[c].action(params[readOffset + 1])
                                     offsetFromValue = 2
                                 else:
-                                    com.sharedFlagsShort[c].actionNoInput()
-                                    if offsetFromValue < 2:
-                                        offsetFromValue = 1
+                                    case com.sharedFlagsShort[c].hasNoInputAction:
+                                        of nikHasNoInputAction:
+                                            com.sharedFlagsShort[c].actionNoInput()
+                                            if offsetFromValue < 2:
+                                                offsetFromValue = 1
+                                        of nikRequiresInput:
+                                            raise newException(ValueError, "Missing value for flag")
                             else:
                                 com.sharedFlagsShort[c].action("")
                                 if offsetFromValue < 2:
