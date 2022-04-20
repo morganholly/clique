@@ -409,7 +409,7 @@ proc addFlag*[T: FlagTypes] (com: var CommandVariant,
                                 noInputType: itInt,
                                 noInputBool: false,
                                 noInputAction: faCallback,
-                                refNoInput: callbackNoInput)
+                                callbackNoInput: callbackNoInput)
         elif T is float64:
             flag = FlagVariantRef(kind: fkShortAndLong, shortName: shortName, longName: longName,
                                 datatype: itFloat, valFloat: 0.0,
@@ -418,7 +418,7 @@ proc addFlag*[T: FlagTypes] (com: var CommandVariant,
                                 noInputType: itFloat,
                                 noInputBool: false,
                                 noInputAction: faCallback,
-                                refNoInput: callbackNoInput)
+                                callbackNoInput: callbackNoInput)
         elif T is string:
             flag = FlagVariantRef(kind: fkShortAndLong, shortName: shortName, longName: longName,
                                 datatype: itString, valString: "",
@@ -427,7 +427,7 @@ proc addFlag*[T: FlagTypes] (com: var CommandVariant,
                                 noInputType: itString,
                                 noInputBool: false,
                                 noInputAction: faCallback,
-                                refNoInput: callbackNoInput)
+                                callbackNoInput: callbackNoInput)
         elif T is bool:
             flag = FlagVariantRef(kind: fkShortAndLong, shortName: shortName, longName: longName,
                                 datatype: itBool, valBool: false,
@@ -442,7 +442,7 @@ proc addFlag*[T: FlagTypes] (com: var CommandVariant,
                                 noInputType: itFuzzyBool,
                                 noInputBool: false,
                                 noInputAction: faCallback,
-                                refNoInput: callbackNoInput)
+                                callbackNoInput: callbackNoInput)
         else:
             raise newException(ValueError, "Creation of a flag requires a reference of type int64, float64, string, bool, or FuzzyBool")
     if shared:
