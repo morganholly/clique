@@ -630,7 +630,7 @@ proc addIntFlag* (com: var CommandVariant,
                     shared: bool = false
                     ): var CommandVariant =
     var flag = FlagVariantRef(kind: fkShortOnly,
-                                chr: shortName,
+                                letter: shortName,
                                 datatype: itInt,
                                 valInt: 0,
                                 actionInt: faCallback,
@@ -688,7 +688,7 @@ proc addIntFlag* (com: var CommandVariant,
                     shared: bool = false
                     ): var CommandVariant =
     var flag = FlagVariantRef(kind: fkShortOnly,
-                                chr: shortName,
+                                letter: shortName,
                                 datatype: itInt,
                                 valInt: 0,
                                 actionInt: faRef,
@@ -747,7 +747,7 @@ proc addFloatFlag* (com: var CommandVariant,
                     shared: bool = false
                     ): var CommandVariant =
     var flag = FlagVariantRef(kind: fkShortOnly,
-                                chr: shortName,
+                                letter: shortName,
                                 datatype: itFloat,
                                 valFloat: 0.0,
                                 actionFloat: faCallback,
@@ -805,7 +805,7 @@ proc addFloatFlag* (com: var CommandVariant,
                     shared: bool = false
                     ): var CommandVariant =
     var flag = FlagVariantRef(kind: fkShortOnly,
-                                chr: shortName,
+                                letter: shortName,
                                 datatype: itFloat,
                                 valFloat: 0.0,
                                 actionFloat: faRef,
@@ -864,7 +864,7 @@ proc addStringFlag* (com: var CommandVariant,
                     shared: bool = false
                     ): var CommandVariant =
     var flag = FlagVariantRef(kind: fkShortOnly,
-                                chr: shortName,
+                                letter: shortName,
                                 datatype: itString,
                                 valString: "",
                                 actionString: faCallback,
@@ -922,7 +922,7 @@ proc addStringFlag* (com: var CommandVariant,
                     shared: bool = false
                     ): var CommandVariant =
     var flag = FlagVariantRef(kind: fkShortOnly,
-                                chr: shortName,
+                                letter: shortName,
                                 datatype: itString,
                                 valString: "",
                                 actionString: faRef,
@@ -981,7 +981,7 @@ proc addBoolFlag* (com: var CommandVariant,
                     shared: bool = false
                     ): var CommandVariant =
     var flag = FlagVariantRef(kind: fkShortOnly,
-                                chr: shortName,
+                                letter: shortName,
                                 datatype: itBool,
                                 valBool: false,
                                 actionBool: faCallback,
@@ -1039,7 +1039,7 @@ proc addBoolFlag* (com: var CommandVariant,
                     shared: bool = false
                     ): var CommandVariant =
     var flag = FlagVariantRef(kind: fkShortOnly,
-                                chr: shortName,
+                                letter: shortName,
                                 datatype: itBool,
                                 valBool: false,
                                 actionBool: faRef,
@@ -1098,7 +1098,7 @@ proc addFuzzyBoolFlag* (com: var CommandVariant,
                     shared: bool = false
                     ): var CommandVariant =
     var flag = FlagVariantRef(kind: fkShortOnly,
-                                chr: shortName,
+                                letter: shortName,
                                 datatype: itFuzzyBool,
                                 valFuzzyBool: fbUncertain,
                                 actionFuzzyBool: faCallback,
@@ -1156,7 +1156,7 @@ proc addFuzzyBoolFlag* (com: var CommandVariant,
                     shared: bool = false
                     ): var CommandVariant =
     var flag = FlagVariantRef(kind: fkShortOnly,
-                                chr: shortName,
+                                letter: shortName,
                                 datatype: itFuzzyBool,
                                 valFuzzyBool: fbUncertain,
                                 actionFuzzyBool: faRef,
@@ -1221,7 +1221,7 @@ proc addIntFlag* (com: var CommandVariant,
                     callbackNoInput: proc (val: bool): void
                     ): var CommandVariant =
     var flag = FlagVariantRef(kind: fkShortOnly,
-                                chr: shortName,
+                                letter: shortName,
                                 datatype: itInt,
                                 valInt: 0,
                                 actionInt: faCallback,
@@ -1294,7 +1294,7 @@ proc addIntFlag* (com: var CommandVariant,
                     refNoInput: ref bool
                     ): var CommandVariant =
     var flag = FlagVariantRef(kind: fkShortOnly,
-                                chr: shortName,
+                                letter: shortName,
                                 datatype: itInt,
                                 valInt: 0,
                                 actionInt: faRef,
@@ -1368,7 +1368,7 @@ proc addFloatFlag* (com: var CommandVariant,
                     callbackNoInput: proc (val: bool): void
                     ): var CommandVariant =
     var flag = FlagVariantRef(kind: fkShortOnly,
-                                chr: shortName,
+                                letter: shortName,
                                 datatype: itFloat,
                                 valFloat: 0.0,
                                 actionFloat: faCallback,
@@ -1441,7 +1441,7 @@ proc addFloatFlag* (com: var CommandVariant,
                     refNoInput: ref bool,
                     ): var CommandVariant =
     var flag = FlagVariantRef(kind: fkShortOnly,
-                                chr: shortName,
+                                letter: shortName,
                                 datatype: itFloat,
                                 valFloat: 0.0,
                                 actionFloat: faRef,
@@ -1515,7 +1515,7 @@ proc addStringFlag* (com: var CommandVariant,
                     callbackNoInput: proc (val: bool): void
                     ): var CommandVariant =
     var flag = FlagVariantRef(kind: fkShortOnly,
-                                chr: shortName,
+                                letter: shortName,
                                 datatype: itString,
                                 valString: "",
                                 actionString: faCallback,
@@ -1588,7 +1588,7 @@ proc addStringFlag* (com: var CommandVariant,
                     refNoInput: ref bool,
                     ): var CommandVariant =
     var flag = FlagVariantRef(kind: fkShortOnly,
-                                chr: shortName,
+                                letter: shortName,
                                 datatype: itString,
                                 valString: "",
                                 actionString: faRef,
@@ -1662,7 +1662,7 @@ proc addFuzzyBoolFlag* (com: var CommandVariant,
                     callbackNoInput: proc (val: bool): void
                     ): var CommandVariant =
     var flag = FlagVariantRef(kind: fkShortOnly,
-                                chr: shortName,
+                                letter: shortName,
                                 datatype: itFuzzyBool,
                                 valFuzzyBool: fbUncertain,
                                 actionFuzzyBool: faCallback,
@@ -1735,7 +1735,7 @@ proc addFuzzyBoolFlag* (com: var CommandVariant,
                     refNoInput: ref bool,
                     ): var CommandVariant =
     var flag = FlagVariantRef(kind: fkShortOnly,
-                                chr: shortName,
+                                letter: shortName,
                                 datatype: itFuzzyBool,
                                 valFuzzyBool: fbUncertain,
                                 actionFuzzyBool: faRef,

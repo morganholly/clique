@@ -26,7 +26,7 @@ type
     FlagVariantRef* = ref FlagVariant
     FlagVariant* = object
         case kind*: FlagKind:
-            of fkShortOnly: chr*: char
+            of fkShortOnly: letter*: char
             of fkLongOnly: name*: string
             of fkShortAndLong:
                 shortName*: char
@@ -74,10 +74,10 @@ type
 
 proc `$`* (fv: FlagVariantRef): string =
         case fv.kind:
-            of fkShortOnly: result = result & $fv.chr
+            of fkShortOnly: result = result & $fv.letter
             of fkLongOnly: result = result & fv.name
             of fkShortAndLong:
-                result = result & $fv.chr & $fv.longName
+                result = result & $fv.shortName & $fv.longName
         case fv.datatype:
             of itInt:
                 # result = result & $fv.valInt
