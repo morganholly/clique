@@ -347,27 +347,27 @@ proc addFlag*[T: FlagTypes] (com: var CommandVariant,
         when T is int64:
             flag = FlagVariantRef(kind: fkShortAndLong, shortName: shortName, longName: longName,
                                 datatype: itInt, valInt: 0,
-                                actionInt: faCallback, callbackInt: calback,
+                                actionInt: faCallback, callbackInt: callback,
                                 hasNoInputAction: nikRequiresInput)
         elif T is float64:
             flag = FlagVariantRef(kind: fkShortAndLong, shortName: shortName, longName: longName,
                                 datatype: itFloat, valFloat: 0.0,
-                                actionFloat: faCallback, callbackFloat: calback,
+                                actionFloat: faCallback, callbackFloat: callback,
                                 hasNoInputAction: nikRequiresInput)
         elif T is string:
             flag = FlagVariantRef(kind: fkShortAndLong, shortName: shortName, longName: longName,
                                 datatype: itString, valString: "",
-                                actionString: faCallback, callbackString: calback,
+                                actionString: faCallback, callbackString: callback,
                                 hasNoInputAction: nikRequiresInput)
         elif T is bool:
             flag = FlagVariantRef(kind: fkShortAndLong, shortName: shortName, longName: longName,
                                 datatype: itBool, valBool: false,
-                                actionBool: faCallback, callbackBool: calback,
+                                actionBool: faCallback, callbackBool: callback,
                                 hasNoInputAction: nikRequiresInput)
         elif T is FuzzyBool:
             flag = FlagVariantRef(kind: fkShortAndLong, shortName: shortName, longName: longName,
                                 datatype: itFuzzyBool, valFuzzyBool: fbUncertain,
-                                actionFuzzyBool: faCallback, callbackFuzzyBool: calback,
+                                actionFuzzyBool: faCallback, callbackFuzzyBool: callback,
                                 hasNoInputAction: nikRequiresInput)
         else:
             raise newException(ValueError, "Creation of a flag requires a reference of type int64, float64, string, bool, or FuzzyBool")
@@ -375,7 +375,7 @@ proc addFlag*[T: FlagTypes] (com: var CommandVariant,
         when T is int64:
             flag = FlagVariantRef(kind: fkShortAndLong, shortName: shortName, longName: longName,
                                 datatype: itInt, valInt: 0,
-                                actionInt: faCallback, callbackInt: calback,
+                                actionInt: faCallback, callbackInt: callback,
                                 hasNoInputAction: nikHasNoInputAction,
                                 noInputType: itInt,
                                 noInputBool: false,
@@ -384,7 +384,7 @@ proc addFlag*[T: FlagTypes] (com: var CommandVariant,
         elif T is float64:
             flag = FlagVariantRef(kind: fkShortAndLong, shortName: shortName, longName: longName,
                                 datatype: itFloat, valFloat: 0.0,
-                                actionFloat: faCallback, callbackFloat: calback,
+                                actionFloat: faCallback, callbackFloat: callback,
                                 hasNoInputAction: nikHasNoInputAction,
                                 noInputType: itFloat,
                                 noInputBool: false,
@@ -393,7 +393,7 @@ proc addFlag*[T: FlagTypes] (com: var CommandVariant,
         elif T is string:
             flag = FlagVariantRef(kind: fkShortAndLong, shortName: shortName, longName: longName,
                                 datatype: itString, valString: "",
-                                actionString: faCallback, callbackString: calback,
+                                actionString: faCallback, callbackString: callback,
                                 hasNoInputAction: nikHasNoInputAction,
                                 noInputType: itString,
                                 noInputBool: false,
@@ -402,13 +402,13 @@ proc addFlag*[T: FlagTypes] (com: var CommandVariant,
         elif T is bool:
             flag = FlagVariantRef(kind: fkShortAndLong, shortName: shortName, longName: longName,
                                 datatype: itBool, valBool: false,
-                                actionBool: faCallback, callbackBool: calback,
+                                actionBool: faCallback, callbackBool: callback,
                                 hasNoInputAction: nikHasNoInputAction,
                                 noInputType: itBool)
         elif T is FuzzyBool:
             flag = FlagVariantRef(kind: fkShortAndLong, shortName: shortName, longName: longName,
                                 datatype: itFuzzyBool, valFuzzyBool: fbUncertain,
-                                actionFuzzyBool: faCallback, callbackFuzzyBool: calback,
+                                actionFuzzyBool: faCallback, callbackFuzzyBool: callback,
                                 hasNoInputAction: nikHasNoInputAction,
                                 noInputType: itFuzzyBool,
                                 noInputBool: false,
