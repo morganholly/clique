@@ -79,6 +79,68 @@ proc parse* (com: var CommandVariant, params: seq[string], root: CommandVariant,
                         current = current.parent
         elif value.startsWith("-"):
             echo("short flag")
+            var offsetFromValue: int = 0
+            for c in value.replace("-", ""):
+                # TODO finish below code, should handle -a, -a val, -abc, -abc val for any combination of types
+                if c in com.flagsShort:
+                    echo("not shared flag")
+                    if com.flagsShort[c].datatype != itBool:
+                        if (len(params) - readOffset) > 1:
+                            echo("input")
+                            com.flagsShort[c].action(params[readOffset + 1])
+                            offsetFromValue = 2
+                        else:
+                            echo("no input, notbool")
+                            com.sharedFlagsShort[c].actionNoInput()
+                            if offsetFromValue < 2:
+                                offsetFromValue = 1
+                    else:
+                        echo("no input, bool")
+                        com.flagsShort[c].action("")
+                        if offsetFromValue < 2:
+                            offsetFromValue = 1
+                else:
+                    echo("shared flag")
+                    var current: CommandVariant = com.parent
+                    while current != root:
+                        echo("step")
+                        if c in current.sharedFlagsShort:
+                            echo("found shared flag")
+                            if com.sharedFlagsShort[c].datatype != itBool:
+                                if (len(params) - readOffset) > 1:
+                                    com.sharedFlagsShort[c].action(params[readOffset + 1])
+                                    offsetFromValue = 2
+                                else:
+                                    com.sharedFlagsShort[c].actionNoInput()
+                                    if offsetFromValue < 2:
+                                        offsetFromValue = 1
+                            else:
+                                com.sharedFlagsShort[c].action("")
+                                if offsetFromValue < 2:
+                                    offsetFromValue = 1
+                            break
+                        else:
+                            echo("recurse up")
+                            current = current.parent
+                    if current == root:
+                        if c in current.sharedFlagsShort:
+                            echo("found shared flag on root")
+                            if com.sharedFlagsShort[c].datatype != itBool:
+                                if (len(params) - readOffset) > 1:
+                                    com.sharedFlagsShort[c].action(params[readOffset + 1])
+                                    offsetFromValue = 2
+                                else:
+                                    com.sharedFlagsShort[c].actionNoInput()
+                                    if offsetFromValue < 2:
+                                        offsetFromValue = 1
+                            else:
+                                com.sharedFlagsShort[c].action("")
+                                if offsetFromValue < 2:
+                                    offsetFromValue = 1
+                            break
+                        else:
+                            raise newException(ValueError, "Flag " & $c & " not found in current command and all parent commands")
+            parse(com, params, root, readOffset + offsetFromValue)
         else:
             echo("subcommand or input")
             echo($com)
