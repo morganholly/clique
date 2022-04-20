@@ -35,7 +35,7 @@ type
 proc `$`* (com: CommandVariant): string =
     case com.kind:
         of ckCommand:
-            result = com.name & com.info & com.help & "\n" & $com.subcommands & "\nfs " & $com.flagsShort & "\nfl " & $com.flagsLong & "\nsfs " & $com.sharedFlagsShort & "\nsfl " & $com.sharedFlagsLong
+            result = com.name & " " & com.info & " " & com.help & "\n" & $com.subcommands & "\nfs " & $com.flagsShort & "\nfl " & $com.flagsLong & "\nsfs " & $com.sharedFlagsShort & "\nsfl " & $com.sharedFlagsLong
         of ckAlias:
             result = "alias"
 
@@ -96,7 +96,7 @@ proc parse* (com: var CommandVariant, params: seq[string], root: CommandVariant,
                     echo("not shared flag")
                     if com.flagsShort[c].datatype != itBool:
                         if (len(params) - readOffset) > 1 and not params[readOffset + 1].startsWith("-"):
-                            echo("input")
+                            echo("has value")
                             com.flagsShort[c].action(params[readOffset + 1])
                             offsetFromValue = 2
                         else:

@@ -77,33 +77,33 @@ proc `$`* (fv: FlagVariantRef): string =
             of fkShortOnly: result = result & $fv.letter
             of fkLongOnly: result = result & fv.name
             of fkShortAndLong:
-                result = result & $fv.shortName & $fv.longName
+                result = result & $fv.shortName & " " & $fv.longName
         case fv.datatype:
             of itInt:
                 # result = result & $fv.valInt
                 case fv.actionInt:
-                    of faCallback: result = result & "callbackInt"
-                    of faRef: result = result & "refInt"
+                    of faCallback: result = result & " callbackInt"
+                    of faRef: result = result & " refInt"
             of itFloat:
                 # result = result & $fv.valFloat
                 case fv.actionFloat:
-                    of faCallback: result = result & "callbackFloat"
-                    of faRef: result = result & "refFloat"
+                    of faCallback: result = result & " callbackFloat"
+                    of faRef: result = result & " refFloat"
             of itString:
                 # result = result & $fv.valString
                 case fv.actionString:
-                    of faCallback: result = result & "callbackString"
-                    of faRef: result = result & "refString"
+                    of faCallback: result = result & " callbackString"
+                    of faRef: result = result & " refString"
             of itBool:  # false by default
                 # result = result & $fv.valBool
                 case fv.actionBool:
-                    of faCallback: result = result & "callbackBool"
-                    of faRef: result = result & "refBool"
+                    of faCallback: result = result & " callbackBool"
+                    of faRef: result = result & " refBool"
             of itFuzzyBool:  # fbUncertain by default
                 # result = result & $fv.valFuzzyBool
                 case fv.actionFuzzyBool:
-                    of faCallback: result = result & "callbackFuzzyBool"
-                    of faRef: result = result & "refFuzzyBool"
+                    of faCallback: result = result & " callbackFuzzyBool"
+                    of faRef: result = result & " refFuzzyBool"
         case fv.hasNoInputAction:
             of nikHasNoInputAction:
                 case fv.noInputType:
@@ -112,12 +112,12 @@ proc `$`* (fv: FlagVariantRef): string =
                     of itInt, itFloat, itString, itFuzzyBool:
                         # result = result & fv.noInputBool
                         case fv.noInputAction:
-                            of faCallback: result = result & "callbackNoInput"
-                            of faRef: result = result & "refNoInput"
+                            of faCallback: result = result & " callbackNoInput"
+                            of faRef: result = result & " refNoInput"
             of nikRequiresInput:
                 discard
-        result = result & fv.help
-        result = result & fv.info
+        result = result & " " & fv.help
+        result = result & " " & fv.info
 
 
 proc action* (fv: var FlagVariantRef): void =
