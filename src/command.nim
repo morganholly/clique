@@ -51,7 +51,7 @@ proc parse* (com: var CommandVariant, params: seq[string], root: CommandVariant,
             if vnodash in com.flagsLong:
                 echo("command has flag")
                 if com.flagsLong[vnodash].datatype != itBool:
-                    if (len(params) - readOffset) > 1:
+                    if (len(params) - readOffset) > 1 and not params[readOffset + 1].startsWith("-"):
                         com.flagsLong[vnodash].action(params[readOffset + 1])
                         parse(com, params, root, readOffset + 2)
                     else:
@@ -70,7 +70,7 @@ proc parse* (com: var CommandVariant, params: seq[string], root: CommandVariant,
                 while current != root:
                     if vnodash in current.sharedFlagsLong:
                         if current.sharedFlagsLong[vnodash].datatype != itBool:
-                            if (len(params) - readOffset) > 1:
+                            if (len(params) - readOffset) > 1 and not params[readOffset + 1].startsWith("-"):
                                 current.sharedFlagsLong[vnodash].action(params[readOffset + 1])
                                 parse(current, params, root, readOffset + 2)
                             else:
@@ -95,7 +95,7 @@ proc parse* (com: var CommandVariant, params: seq[string], root: CommandVariant,
                 if c in com.flagsShort:
                     echo("not shared flag")
                     if com.flagsShort[c].datatype != itBool:
-                        if (len(params) - readOffset) > 1:
+                        if (len(params) - readOffset) > 1 and not params[readOffset + 1].startsWith("-"):
                             echo("input")
                             com.flagsShort[c].action(params[readOffset + 1])
                             offsetFromValue = 2
@@ -121,7 +121,7 @@ proc parse* (com: var CommandVariant, params: seq[string], root: CommandVariant,
                         if c in current.sharedFlagsShort:
                             echo("found shared flag")
                             if com.sharedFlagsShort[c].datatype != itBool:
-                                if (len(params) - readOffset) > 1:
+                                if (len(params) - readOffset) > 1 and not params[readOffset + 1].startsWith("-"):
                                     com.sharedFlagsShort[c].action(params[readOffset + 1])
                                     offsetFromValue = 2
                                 else:
@@ -144,7 +144,7 @@ proc parse* (com: var CommandVariant, params: seq[string], root: CommandVariant,
                         if c in current.sharedFlagsShort:
                             echo("found shared flag on root")
                             if com.sharedFlagsShort[c].datatype != itBool:
-                                if (len(params) - readOffset) > 1:
+                                if (len(params) - readOffset) > 1 and not params[readOffset + 1].startsWith("-"):
                                     com.sharedFlagsShort[c].action(params[readOffset + 1])
                                     offsetFromValue = 2
                                 else:
