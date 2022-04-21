@@ -208,28 +208,29 @@ proc parse* (com: var CommandVariant, params: seq[string], root: CommandVariant,
         com.callback()
 
 proc process* (com: var CommandVariant): void =
-    echo("process")
-    var clparams: seq[string] = commandLineParams()
-    if len(clparams) > 0:
-        var revparams: seq[string] = clparams.reversed()
-        echo(revparams)
-        var toggleRev: seq[bool] = @[]
-        for i in 0 .. len(revparams) - 2:
-            toggleRev &= @[revparams[i].startswith("-") or revparams[i + 1].startswith("-")]
-            echo(toggleRev)
-        toggleRev &= @[clparams[0].startswith("-")]
-        var toggle: seq[bool] = toggleRev.reversed()
-        echo(toggle)
-        var flags: seq[string] = @[]
-        var remainder: seq[string] = @[]
-        for z in zip(clparams, toggle):
-            if z[1]:
-                flags &= @[z[0]]
-            else:
-                remainder &= @[z[0]]
-        echo(remainder)
-        echo(flags)
-    parse(com, clparams, com, 0)
+    # TODO restructure to remove recursion
+    # echo("process")
+    # var clparams: seq[string] = commandLineParams()
+    # if len(clparams) > 0:
+    #     var revparams: seq[string] = clparams.reversed()
+    #     echo(revparams)
+    #     var toggleRev: seq[bool] = @[]
+    #     for i in 0 .. len(revparams) - 2:
+    #         toggleRev &= @[revparams[i].startswith("-") or (revparams[i + 1].startswith("-") and not (revparams[i + 1].endswith("%") or revparams[i + 1].endswith("^")))]
+    #         echo(toggleRev)
+    #     toggleRev &= @[clparams[0].startswith("-")]
+    #     var toggle: seq[bool] = toggleRev.reversed()
+    #     echo(toggle)
+    #     var flags: seq[string] = @[]
+    #     var remainder: seq[string] = @[]
+    #     for z in zip(clparams, toggle):
+    #         if z[1]:
+    #             flags &= @[z[0]]
+    #         else:
+    #             remainder &= @[z[0]]
+    #     echo(remainder)
+    #     echo(flags)
+    parse(com, commandLineParams(), com, 0)
 
 
 proc newCommandVariant* (name: string,
