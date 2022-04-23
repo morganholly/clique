@@ -1,4 +1,12 @@
-import std/tables, std/os, std/strutils, std/macros, std/enumerate, std/algorithm, std/sequtils
+import
+    std/[tables,
+        os,
+        strutils,
+        macros,
+        enumerate,
+        algorithm,
+        sequtils,
+        editdistance]
 import flag, datatypes, alias
 
 
