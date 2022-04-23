@@ -43,191 +43,198 @@ proc parse* (command: var CommandVariant, params: seq[string], root: var Command
     echo("parse")
     var com: CommandVariant = command
     var readOffset: range[0 .. high(int)] = 0
+    echo(params)
     while readOffset < len(params):
-        echo(len(params), params, readOffset)
-        if (len(params) - readOffset) > 0:
-            echo("has params")
-            var value = params[readOffset]
-            if value.startsWith("--"):
-                echo("long flag")
-                var vnodash = value.replace("-", "")
-                if vnodash in com.flagsLong:
-                    echo("command has flag")
-                    if com.flagsLong[vnodash].datatype != itBool:
-                        if (len(params) - readOffset) > 1 and not params[readOffset + 1].startsWith("-"):
-                            com.flagsLong[vnodash].action(params[readOffset + 1])
-                            # parse(com, params, root, readOffset + 2)
-                            readOffset += 2
-                            continue
-                        else:
-                            case com.flagsLong[vnodash].hasNoInputAction:
-                                of nikHasNoInputAction:
-                                    com.flagsLong[vnodash].actionNoInput()
-                                    # parse(com, params, root, readOffset + 1)
-                                    readOffset += 1
-                                    continue
-                                of nikRequiresInput:
-                                    raise newException(ValueError, "Missing value for flag")
-                    else:
-                        com.flagsLong[vnodash].action("")
-                        # parse(com, params, root, readOffset + 1)
+        echo("has params, reading subcommands or inputs")
+        echo($com)
+        var value = params[readOffset]
+        echo(value)
+        if not value.startsWith("-"):
+            if value in com.subcommands:
+                echo("subcommand")
+                var subcommand = com.subcommands[value]
+                case subcommand.kind:
+                    of ckCommand:
+                        echo("command")
+                        # parse(subcommand, params, root, readOffset + 1)
+                        com = subcommand
                         readOffset += 1
                         continue
-                else:
-                    echo("recurse up")
-                    var current: CommandVariant = com.parent
-                    while current != root:
-                        if vnodash in current.sharedFlagsLong:
-                            if current.sharedFlagsLong[vnodash].datatype != itBool:
-                                if (len(params) - readOffset) > 1 and not params[readOffset + 1].startsWith("-"):
-                                    current.sharedFlagsLong[vnodash].action(params[readOffset + 1])
-                                    # parse(current, params, root, readOffset + 2)
-                                    readOffset += 2
-                                    continue
-                                else:
-                                    case com.sharedFlagsLong[vnodash].hasNoInputAction:
-                                        of nikHasNoInputAction:
-                                            com.sharedFlagsLong[vnodash].actionNoInput()
-                                            # parse(com, params, root, readOffset + 1)
-                                            readOffset += 1
-                                            continue
-                                        of nikRequiresInput:
-                                            raise newException(ValueError, "Missing value for flag")
-                            else:
-                                current.sharedFlagsLong[vnodash].action("")
+                    of ckAlias:
+                        echo("alias")
+                        var alias = subcommand
+                        case alias.aliasKind:
+                            of akMoveOnly:
+                                echo("move alias")
+                                var current: CommandVariant = subcommand
+                                for state in alias.states:
+                                    case state.kind:
+                                        of amMoveUp:
+                                            echo("move up")
+                                            if current != root:
+                                                current = current.parent
+                                        of amMoveRoot:
+                                            echo("move root")
+                                            current = root
+                                        of amMoveDown:
+                                            echo("move down to ", state.commandName)
+                                            case current.kind:
+                                                of ckCommand:
+                                                    current = current.subcommands[state.commandName]
+                                                of ckAlias:
+                                                    raise newException(ValueError, "Aliases do not contain subcommands")
                                 # parse(current, params, root, readOffset + 1)
+                                com = current
                                 readOffset += 1
                                 continue
-                            break
-                        else:
-                            echo(current.parent.name)
-                            current = current.parent
-            elif value.startsWith("-"):
-                echo("short flag")
-                var offsetFromValue: int = 0
-                for c in value.replace("-", ""):
-                    if c in com.flagsShort:
-                        echo("not shared flag")
-                        if com.flagsShort[c].datatype != itBool:
+                            of akProcessing:
+                                discard
+                                # moveStates: seq[AliasMoveStateVariant]
+                                # procStates: seq[AliasProcStateVariant]
+            else:
+                echo("input or misspelled")
+                readOffset += 1
+        else:
+            echo("found flag")
+            break
+    while readOffset < len(params):
+        echo("has params, reading flags or inputs")
+        var value = params[readOffset]
+        if value.startsWith("--"):
+            echo("long flag")
+            var vnodash = value.replace("-", "")
+            if vnodash in com.flagsLong:
+                echo("command has flag")
+                if com.flagsLong[vnodash].datatype != itBool:
+                    if (len(params) - readOffset) > 1 and not params[readOffset + 1].startsWith("-"):
+                        com.flagsLong[vnodash].action(params[readOffset + 1])
+                        # parse(com, params, root, readOffset + 2)
+                        readOffset += 2
+                        continue
+                    else:
+                        case com.flagsLong[vnodash].hasNoInputAction:
+                            of nikHasNoInputAction:
+                                com.flagsLong[vnodash].actionNoInput()
+                                # parse(com, params, root, readOffset + 1)
+                                readOffset += 1
+                                continue
+                            of nikRequiresInput:
+                                raise newException(ValueError, "Missing value for flag")
+                else:
+                    com.flagsLong[vnodash].action("")
+                    # parse(com, params, root, readOffset + 1)
+                    readOffset += 1
+                    continue
+            else:
+                echo("recurse up")
+                var current: CommandVariant = com.parent
+                while current != root:
+                    if vnodash in current.sharedFlagsLong:
+                        if current.sharedFlagsLong[vnodash].datatype != itBool:
                             if (len(params) - readOffset) > 1 and not params[readOffset + 1].startsWith("-"):
-                                echo("has value")
-                                com.flagsShort[c].action(params[readOffset + 1])
-                                offsetFromValue = 2
+                                current.sharedFlagsLong[vnodash].action(params[readOffset + 1])
+                                # parse(current, params, root, readOffset + 2)
+                                readOffset += 2
+                                continue
                             else:
-                                echo("no input, notbool")
-                                case com.flagsShort[c].hasNoInputAction:
+                                case com.sharedFlagsLong[vnodash].hasNoInputAction:
                                     of nikHasNoInputAction:
-                                        com.flagsShort[c].actionNoInput()
-                                        if offsetFromValue < 2:
-                                            offsetFromValue = 1
+                                        com.sharedFlagsLong[vnodash].actionNoInput()
+                                        # parse(com, params, root, readOffset + 1)
+                                        readOffset += 1
+                                        continue
                                     of nikRequiresInput:
                                         raise newException(ValueError, "Missing value for flag")
                         else:
-                            echo("no input, bool")
-                            com.flagsShort[c].action("")
-                            if offsetFromValue < 2:
-                                offsetFromValue = 1
-                    else:
-                        echo("shared flag")
-                        var current: CommandVariant = com.parent
-                        while current != root:
-                            echo("step")
-                            if c in current.sharedFlagsShort:
-                                echo("found shared flag")
-                                if com.sharedFlagsShort[c].datatype != itBool:
-                                    if (len(params) - readOffset) > 1 and not params[readOffset + 1].startsWith("-"):
-                                        com.sharedFlagsShort[c].action(params[readOffset + 1])
-                                        offsetFromValue = 2
-                                    else:
-                                        case com.sharedFlagsShort[c].hasNoInputAction:
-                                            of nikHasNoInputAction:
-                                                com.sharedFlagsShort[c].actionNoInput()
-                                                if offsetFromValue < 2:
-                                                    offsetFromValue = 1
-                                            of nikRequiresInput:
-                                                raise newException(ValueError, "Missing value for flag")
-                                else:
-                                    com.sharedFlagsShort[c].action("")
-                                    if offsetFromValue < 2:
-                                        offsetFromValue = 1
-                                break
-                            else:
-                                echo("recurse up")
-                                current = current.parent
-                        if current == root:
-                            if c in current.sharedFlagsShort:
-                                echo("found shared flag on root")
-                                if com.sharedFlagsShort[c].datatype != itBool:
-                                    if (len(params) - readOffset) > 1 and not params[readOffset + 1].startsWith("-"):
-                                        com.sharedFlagsShort[c].action(params[readOffset + 1])
-                                        offsetFromValue = 2
-                                    else:
-                                        case com.sharedFlagsShort[c].hasNoInputAction:
-                                            of nikHasNoInputAction:
-                                                com.sharedFlagsShort[c].actionNoInput()
-                                                if offsetFromValue < 2:
-                                                    offsetFromValue = 1
-                                            of nikRequiresInput:
-                                                raise newException(ValueError, "Missing value for flag")
-                                else:
-                                    com.sharedFlagsShort[c].action("")
-                                    if offsetFromValue < 2:
-                                        offsetFromValue = 1
-                                break
-                            else:
-                                raise newException(ValueError, "Flag " & $c & " not found in current command and all parent commands")
-                # parse(com, params, root, readOffset + offsetFromValue)
-                readOffset += offsetFromValue
-                continue
-            else:
-                echo("subcommand or input")
-                echo($com)
-                echo(value)
-                if value in com.subcommands:
-                    echo("subcommand")
-                    var subcommand = com.subcommands[value]
-                    case subcommand.kind:
-                        of ckCommand:
-                            echo("command")
-                            # parse(subcommand, params, root, readOffset + 1)
-                            com = subcommand
+                            current.sharedFlagsLong[vnodash].action("")
+                            # parse(current, params, root, readOffset + 1)
                             readOffset += 1
                             continue
-                        of ckAlias:
-                            echo("alias")
-                            var alias = subcommand
-                            case alias.aliasKind:
-                                of akMoveOnly:
-                                    echo("move alias")
-                                    var current: CommandVariant = subcommand
-                                    for state in alias.states:
-                                        case state.kind:
-                                            of amMoveUp:
-                                                echo("move up")
-                                                if current != root:
-                                                    current = current.parent
-                                            of amMoveRoot:
-                                                echo("move root")
-                                                current = root
-                                            of amMoveDown:
-                                                echo("move down to ", state.commandName)
-                                                case current.kind:
-                                                    of ckCommand:
-                                                        current = current.subcommands[state.commandName]
-                                                    of ckAlias:
-                                                        raise newException(ValueError, "Aliases do not contain subcommands")
-                                    # parse(current, params, root, readOffset + 1)
-                                    com = current
-                                    readOffset += 1
-                                    continue
-                                of akProcessing:
-                                    discard
-                                    # moveStates: seq[AliasMoveStateVariant]
-                                    # procStates: seq[AliasProcStateVariant]
+                        break
+                    else:
+                        echo(current.parent.name)
+                        current = current.parent
+        elif value.startsWith("-"):
+            echo("short flag")
+            var offsetFromValue: int = 0
+            for c in value.replace("-", ""):
+                if c in com.flagsShort:
+                    echo("not shared flag")
+                    if com.flagsShort[c].datatype != itBool:
+                        if (len(params) - readOffset) > 1 and not params[readOffset + 1].startsWith("-"):
+                            echo("has value")
+                            com.flagsShort[c].action(params[readOffset + 1])
+                            offsetFromValue = 2
+                        else:
+                            echo("no input, notbool")
+                            case com.flagsShort[c].hasNoInputAction:
+                                of nikHasNoInputAction:
+                                    com.flagsShort[c].actionNoInput()
+                                    if offsetFromValue < 2:
+                                        offsetFromValue = 1
+                                of nikRequiresInput:
+                                    raise newException(ValueError, "Missing value for flag")
+                    else:
+                        echo("no input, bool")
+                        com.flagsShort[c].action("")
+                        if offsetFromValue < 2:
+                            offsetFromValue = 1
                 else:
-                    echo("input or misspelled")
+                    echo("shared flag")
+                    var current: CommandVariant = com.parent
+                    while current != root:
+                        echo("step")
+                        if c in current.sharedFlagsShort:
+                            echo("found shared flag")
+                            if com.sharedFlagsShort[c].datatype != itBool:
+                                if (len(params) - readOffset) > 1 and not params[readOffset + 1].startsWith("-"):
+                                    com.sharedFlagsShort[c].action(params[readOffset + 1])
+                                    offsetFromValue = 2
+                                else:
+                                    case com.sharedFlagsShort[c].hasNoInputAction:
+                                        of nikHasNoInputAction:
+                                            com.sharedFlagsShort[c].actionNoInput()
+                                            if offsetFromValue < 2:
+                                                offsetFromValue = 1
+                                        of nikRequiresInput:
+                                            raise newException(ValueError, "Missing value for flag")
+                            else:
+                                com.sharedFlagsShort[c].action("")
+                                if offsetFromValue < 2:
+                                    offsetFromValue = 1
+                            break
+                        else:
+                            echo("recurse up")
+                            current = current.parent
+                    if current == root:
+                        if c in current.sharedFlagsShort:
+                            echo("found shared flag on root")
+                            if com.sharedFlagsShort[c].datatype != itBool:
+                                if (len(params) - readOffset) > 1 and not params[readOffset + 1].startsWith("-"):
+                                    com.sharedFlagsShort[c].action(params[readOffset + 1])
+                                    offsetFromValue = 2
+                                else:
+                                    case com.sharedFlagsShort[c].hasNoInputAction:
+                                        of nikHasNoInputAction:
+                                            com.sharedFlagsShort[c].actionNoInput()
+                                            if offsetFromValue < 2:
+                                                offsetFromValue = 1
+                                        of nikRequiresInput:
+                                            raise newException(ValueError, "Missing value for flag")
+                            else:
+                                com.sharedFlagsShort[c].action("")
+                                if offsetFromValue < 2:
+                                    offsetFromValue = 1
+                            break
+                        else:
+                            raise newException(ValueError, "Flag " & $c & " not found in current command and all parent commands")
+            # parse(com, params, root, readOffset + offsetFromValue)
+            readOffset += offsetFromValue
+            continue
         else:
-            com.callback()
+            echo("input or misspelled")
+            readOffset += 1
+    com.callback()
 
 proc process* (com: var CommandVariant): void =
     # echo("process")
