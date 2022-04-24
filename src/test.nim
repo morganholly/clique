@@ -47,9 +47,9 @@ dref[] = 5
 
 var cv1 = newCommandVariant("root", "test_short", "test_long", root)
 var cv_foo = cv1.addSubcommand("foo", "foo_short", "foo_long", foo)
-var cv_bar = cv1.addSubcommand("bar", "bar_short", "bar_long", bar)
-var cv_bat = cv1.addSubcommand("bat", "bat_short", "bat_long", bat)
-var cv_foo_alias = cv1.addAlias("foo_alias", "^,foo")
+var cv_bar = cv_foo.addSubcommand("bar", "bar_short", "bar_long", bar)
+var cv_bat = cv_bar.addSubcommand("bat", "bat_short", "bat_long", bat)
+var cv_bar_alias = cv1.addAlias("bar_alias", "~,foo,bar")
 var cv_foo_flags = cv_foo.addFlag('a', foo_a).addFlag("bbb", foo_bbb)
 var cv_bar_flags = cv_bar.addFlag('c', "cc", bar_cc, bar_cc_ni).addFlag('d', dref)
 # addFlags(cv_bar, ('c', "cc", true, bar_cc), ('d', true, dref))

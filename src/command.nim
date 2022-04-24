@@ -6,7 +6,8 @@ import
         enumerate,
         algorithm,
         sequtils,
-        editdistance]
+        editdistance,
+        math]
 import flag, datatypes, alias
 
 
@@ -47,7 +48,21 @@ proc `$`* (com: CommandVariant): string =
         of ckAlias:
             result = "alias"
 
-proc parse* (command: var CommandVariant, params: seq[string], root: var CommandVariant): void =
+proc sortDist(a, b: tuple[dist: int, val: string]): int =
+    result = cmp(a.dist, b.dist)
+
+proc recGetCommandStrings(com: CommandVariant, prefixStr: string = ""): seq[string] =
+    # var dists: seq[tuple[dist: int, val: string]] = @[]
+    if len(com.subcommands) > 0:
+        # for c in com.subcommands.keys():
+        #     dists &= @[(c.editDistance(input), c)]
+        # dists.sort(sortDist)
+        for k, v in com.subcommands.pairs():
+            result &= recGetCommandStrings(v, if len(prefixStr) > 0: prefixStr & " " & k else: k):
+    else:
+        result &= prefixStr
+
+proc parse* (command: var CommandVariant, params: var seq[string], root: var CommandVariant): void =
     echo("parse")
     var com: CommandVariant = command
     var readOffset: range[0 .. high(int)] = 0
@@ -101,7 +116,40 @@ proc parse* (command: var CommandVariant, params: seq[string], root: var Command
                                 # procStates: seq[AliasProcStateVariant]
             else:
                 echo("input or misspelled")
-                readOffset += 1
+                echo("params: ", params)
+                echo("current: ", params[readOffset])
+                var untilFlags: seq[string] = @[]
+                for p in params[readOffset .. ^1]:
+                    if not params[readOffset].startsWith("-"):
+                        untilFlags &= @[p]
+                echo("slice: ", params[readOffset .. ^1])
+                echo("untilFlags: ", untilFlags)
+                if len(untilFlags) == 1:
+                    var dists: seq[tuple[dist: int, val: string]] = @[]
+                    for c in com.subcommands.keys():
+                        dists &= @[(c.editDistance(untilFlags[0]), c)]
+                    echo(dists)
+                else:
+                    var ufString = untilFlags.join(" ")
+                    var comStrings = com.recGetCommandStrings()
+                    echo(comStrings)
+                    var dists: seq[tuple[dist: int, val: string]] = @[]
+                    comStrings.sort()
+                    for c in comStrings:
+                        dists &= @[(c.editDistance(untilFlags[0]), c)]
+                    dists.sort(sortDist)
+                    # echo(dists[0 ..< 10])
+                    for i in 0 ..< 10:
+                        echo(i + 1, " ", dists[i])
+                    var topSpaceSplit = dists[0][1].split(" ")
+                    if len(untilFlags) == len(topSpaceSplit):
+                        for i in 0 ..< len(untilFlags):
+                            params[readOffset + i] = topSpaceSplit[i]
+                    # var subsection = ""
+                    # var rest = ufString
+                    # for c in com.subcommands.keys():
+                    #     subsection = rest[0 .. len(c) + count(ufString, ' ') + max(int(floor(len(c) / 10)), 5)]
+                # readOffset += 1
         else:
             echo("found flag")
             break
@@ -246,7 +294,7 @@ proc parse* (command: var CommandVariant, params: seq[string], root: var Command
 
 proc process* (com: var CommandVariant): void =
     # echo("process")
-    # var clparams: seq[string] = commandLineParams()
+    var clparams: seq[string] = commandLineParams()
     # if len(clparams) > 0:
     #     var revparams: seq[string] = clparams.reversed()
     #     echo(revparams)
@@ -266,7 +314,7 @@ proc process* (com: var CommandVariant): void =
     #             remainder &= @[z[0]]
     #     echo(remainder)
     #     echo(flags)
-    parse(com, commandLineParams(), com)
+    parse(com, clparams, com)
 
 
 proc newCommandVariant* (name: string,
