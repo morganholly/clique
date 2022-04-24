@@ -136,7 +136,7 @@ proc parse* (command: var CommandVariant, params: var seq[string], root: var Com
                     var dists: seq[tuple[dist: int, val: string]] = @[]
                     comStrings.sort()
                     for c in comStrings:
-                        dists &= @[(c.editDistance(untilFlags[0]), c)]
+                        dists &= @[(c.editDistance(ufString), c)]
                     dists.sort(sortDist)
                     # echo(dists[0 ..< 10])
                     for i in 0 ..< 10:
