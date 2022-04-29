@@ -238,7 +238,7 @@ proc parse* (command: var CommandVariant, params: var seq[string], root: var Com
                 else:
                     echo("shared flag")
                     var current: CommandVariant = com.parent
-                    while current != root:
+                    while true:
                         echo("step")
                         if c in current.sharedFlagsShort:
                             echo("found shared flag")
@@ -260,30 +260,11 @@ proc parse* (command: var CommandVariant, params: var seq[string], root: var Com
                                     offsetFromValue = 1
                             break
                         else:
-                            echo("recurse up")
-                            current = current.parent
-                    if current == root:
-                        if c in current.sharedFlagsShort:
-                            echo("found shared flag on root")
-                            if com.sharedFlagsShort[c].datatype != itBool:
-                                if (len(params) - readOffset) > 1 and not params[readOffset + 1].startsWith("-"):
-                                    com.sharedFlagsShort[c].action(params[readOffset + 1])
-                                    offsetFromValue = 2
-                                else:
-                                    case com.sharedFlagsShort[c].hasNoInputAction:
-                                        of nikHasNoInputAction:
-                                            com.sharedFlagsShort[c].actionNoInput()
-                                            if offsetFromValue < 2:
-                                                offsetFromValue = 1
-                                        of nikRequiresInput:
-                                            raise newException(ValueError, "Missing value for flag")
+                            if current != root:
+                                echo("recurse up")
+                                current = current.parent
                             else:
-                                com.sharedFlagsShort[c].action("")
-                                if offsetFromValue < 2:
-                                    offsetFromValue = 1
-                            break
-                        else:
-                            raise newException(ValueError, "Flag " & $c & " not found in current command and all parent commands")
+                                raise newException(ValueError, "Flag " & $c & " not found in current command and all parent commands")
             # parse(com, params, root, readOffset + offsetFromValue)
             readOffset += offsetFromValue
             continue
